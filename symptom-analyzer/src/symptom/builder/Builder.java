@@ -2,8 +2,8 @@ package symptom.builder;
 
 import java.util.ArrayList;
 
+import resource.KnowledgeBase;
 import symptom.algorithm.Algorithm;
-import symptom.article.Article;
 import symptom.Symptom;
 import symptom.convertor.Convertor;
 
@@ -28,15 +28,15 @@ public abstract class Builder {
 		this.co = co;
 	}
 
-	public Article getAr() {
+	public KnowledgeBase getAr() {
 		return ar;
 	}
 
-	public void setAr(Article ar) {
+	public void setAr(KnowledgeBase ar) {
 		this.ar = ar;
 	}
 
-	Article ar;
+	KnowledgeBase ar;
 	
 	public ArrayList<Symptom> build() {
 		ArrayList<Symptom> symptoms;;
