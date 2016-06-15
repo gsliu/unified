@@ -17,8 +17,9 @@ class ESSearchLogClip:
 
         
     def search(self, log):
-        ret = self.es.search(index='ikb', q='"' + log + '"') 
-        return self.parseResult(ret)
+        ret = self.es.search(index='ikb', q='"' + log + '"', size=30) 
+        return ret
+        #return self.parseResult(ret)
 
 if __name__ == '__main__':
     eslog = ESSearchLogClip()

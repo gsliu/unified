@@ -58,7 +58,7 @@ class LogHTMLChecker:
             for string in m4:
                 kblog = kblog + self.strip_tags(string)
 
-        print kblog
+        #print kblog
         try:
             if log in kblog:
                 return True
