@@ -3,11 +3,13 @@ import re
 from esSearchLogClip import ESSearchLogClip 
 from mysqlLoadLogClip import MysqlLoadLogClip 
 from symptom import Symptom 
+from logCheckKBHtml import LogHTMLChecker
 
 class Builder():
     def __init__(self):
         self.es = ESSearchLogClip()
         self.mysql = MysqlLoadLogClip()
+        self.lc = LogHTMLChecker()
      
     def process(self):
         while self.mysql.hasNext():
@@ -15,9 +17,10 @@ class Builder():
             print("LOG=======>%s") % logclip
             result = self.es.search(logclip)
             for kbnumber in result:
-                 print("   updating sym %d") % kbnumber
-                 sym = Symptom(kbnumber)
-                 sym.addLog(logclip)
+                 if self.lc.check(kbnumber, logclip):
+                     print("   updating sym %d") % kbnumber
+                     sym = Symptom(kbnumber)
+                     sym.addLog(logclip)
 
 if __name__ == '__main__':
     builder = Builder()
