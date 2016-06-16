@@ -4,9 +4,7 @@ import mysql.connector
 import MySQLdb
 
 
-sys.path.append(os.path.abspath('../../symptom-analyzer-log/'))
-sys.path.append(os.path.abspath('../'))
-print(sys.path)
+#print(sys.path)
 
 from symptom import Symptom
 from matcher import Matcher
@@ -45,8 +43,8 @@ if __name__ == '__main__':
     ret = m.match("YYYY-MM-DDT18:05:57.433Z [3DF03B90 info 'Vcsvc.VMotionSrc (1388772268136447)'] ResolveCb: VMX reports needsUnregister = false for migrateType MIGRATE_TYPE_VMOTION")
     #print ret
     ret = m.match("YYYY-MM-DDT18:04:27.748Z [4FA40B70 warning 'Vcsvc.VMotionDst (1388772268136447)' opID=57C757C9-000004C9-9c-75-89 user=vpxuser] Bind: Failed to initialize VMotionWorker")
-    f = open('log')
-    ret = m.match(f.read())
-    for r in ret:
-        print "%s, %2.8f" % (r['kbnumber'], r['score'])
+    #f = open('log')
+    #ret = m.match(f.read())
+    #for r in ret:
+     #   print "%s, %2.8f" % (r['kbnumber'], r['score'])
     #print ret

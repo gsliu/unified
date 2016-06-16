@@ -2,10 +2,14 @@ import sys
 import re
 from esSearchLogClip import ESSearchLogClip 
 from mysqlLogClip import MysqlLogClip 
-from symptom import Symptom 
+sys.path.append("..")
+print sys.path
+
+from common.symptom import Symptom 
 
 reload(sys);
 sys.setdefaultencoding("utf8")
+
 
 
 class Builder():

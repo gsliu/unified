@@ -1,33 +1,40 @@
+import sys
 from flask import Flask
 from flask_restful import request, reqparse, abort, Api, Resource
 import os
 import json
 
-app = Flask(__name__)
-api = Api(app)
+sys.path.append('..')
+from common.textMatcher import TextMatcher
+from common.indexMatcher import IndexMatcher
 
 
 
-parser = reqparse.RequestParser()
-parser.add_argument('text')
-parser.add_argument('file')
-
+#matcher.....
+textMatcher = TextMatcher()
+indexMatcher = IndexMatcher()
+    
 
 #dispatch text
 #url  http://unified.eng.vmware.com:8000/text
 # action: post
 # field name:text
 class TextDispatcher(Resource):
+    
+
     def get(self):
+        #self.m = TextMatcher()
         return 'This is text get'
  
     def post(self):
-        args = parser.parse_args()
-        text = args['text']
+        text = request.form['text']
         print text
+        ret = textMatcher.match(text)
+        print ret
         #####Todo...
 
-        return 'text received', 200
+        #return 'text received', 200
+        return ret
 
   
 #dispatch file
@@ -105,15 +112,32 @@ class SRDispatcher(Resource):
 
 
 
+class Service:
+    def __init__(self):
+        self.createApp()
+        
+    def createApp(self):
+        self.app = Flask(__name__)
+        self.api = Api(self.app)
+ 
+        self.api.add_resource(TextDispatcher, '/text')
+        self.api.add_resource(FileDispatcher, '/file')
+        self.api.add_resource(TaskDispatcher, '/task')
+        self.api.add_resource(PRDispatcher, '/pr')
+        self.api.add_resource(SRDispatcher, '/sr')
+ 
 
-api.add_resource(TextDispatcher, '/text')
-api.add_resource(FileDispatcher, '/file')
-api.add_resource(TaskDispatcher, '/task')
-api.add_resource(PRDispatcher, '/pr')
-api.add_resource(SRDispatcher, '/sr')
+    def start(self):
+        self.app.run(host='0.0.0.0', port=8000,debug=True)
+        #self.app.run(host='0.0.0.0', port=8000)
 
 
+
+       
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000,debug=True)
+    #textMatcher = TextMatcher()
+    s = Service()
+    s.start()
+

@@ -2,11 +2,9 @@ import sys
 import os
 import mysql.connector
 import MySQLdb
+#from .. import symptom
 
-
-sys.path.append(os.path.abspath('../symptom-analyzer-log/'))
-#print(sys.path)
-from symptom import Symptom
+from  symptom import Symptom
 
 
 
