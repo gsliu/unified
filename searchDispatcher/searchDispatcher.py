@@ -30,8 +30,6 @@ class TextDispatcher(Resource):
         text = request.form['text']
         print text
         ret = textMatcher.match(text)
-        print ret
-        #####Todo...
 
         #return 'text received', 200
         return ret
@@ -43,13 +41,10 @@ class TextDispatcher(Resource):
 #fieldname:file
 class FileDispatcher(Resource):
     def post(self):
-        #args = parser.parse_args()
-        #file = args['file']
         file = request.files['file']
         if file:
             f_name = file.filename
             print f_name
-            #f_name = str(uuid.uuid4()) + extension
             file.save(os.path.join('/tmp/', f_name))
             return json.dumps({'filename':f_name})
         return 'upload failed', 500
