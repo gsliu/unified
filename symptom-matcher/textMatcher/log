@@ -1,0 +1,43 @@
+There seem to be two issues here:
+
+Issue 1: vMotion failing with vim.fault.InvalidState when VM which is reconfigured with, 1) hide NX/XD flags and 2) reset all the CPU identification masks, is migrated from ESXi 5.1 to ESXi 5.5 host. I looked at the first set of logs(12/19) and found that hostd on the destination throws a vim.fault.InvalidState while trying to register the VM(Log snippets below)
+
+vpxd-42338.log: 
+Line 28446: 2013-12-19T11:55:51.241+02:00 [06184 info 'vpxdvpxdVmomi' opID=72f92125-8d] [ClientAdapterBase::InvokeOnSoap] Invoke done (piippu1.oulu.fi, vim.host.VMotionManager.prepareDestinationEx)
+...
+Line 28455: 2013-12-19T11:55:51.475+02:00 [06184 error 'VmProv' opID=72f92125-8d] error while initiate VMotion dest (vim.fault.InvalidState)
+
+vpxa.log:
+
+2013-12-19T09:55:50.688Z [34390B70 info 'commonvpxLro' opID=72f92125-8d-be] [VpxLRO] -- BEGIN task-internal-2626 --  -- vim.host.VMotionManager.initiateDestination -- fb515527-aed9-2647-2629-53dfeac27ae5
+...
+2013-12-19T09:55:50.801Z [34390B70 error 'vpxavpxaVmomi' opID=72f92125-8d-be] [VpxaClientAdapter::InvokeCommon] Re-throwing method-fault 'vim.fault.InvalidState' received while invoking initiateDestination on vim.host.VMotionManager:ha-vmotionmgr
+
+hostd.log:
+2013-12-19T09:55:50.690Z [FFBEFB70 verbose 'Default' opID=72f92125-8d-be user=vpxuser] AdapterServer: target='vim.host.VMotionManager:ha-vmotionmgr', method='initiateDestination'
+2013-12-19T09:55:50.690Z [26646B70 info 'Vcsvc.VMotion' opID=72f92125-8d-be user=vpxuser] InitiateDestination [1387446948786668], VM = '/vmfs/volumes/525bb453-8c4696cc-eb92-90b11c151f45/migtest4/migtest4.vmx'
+2013-12-19T09:55:50.690Z [26646B70 info 'Vimsvc.TaskManager' opID=72f92125-8d-be user=vpxuser] Task Created : haTask-ha-folder-vm-vim.Folder.registerVm-185859449
+...
+2013-12-19T09:55:50.757Z [26560B70 verbose 'Vmsvc.vm:/vmfs/volumes/525bb453-8c4696cc-eb92-90b11c151f45/migtest4/migtest4.vmx'] Get shared vigor fields message: CPUID register value () is invalid.
+--> CPUID register value () is invalid.
+--> CPUID register value () is invalid.
+--> CPUID register value () is invalid.
+--> CPUID register value () is invalid.
+--> CPUID register value () is invalid.
+--> CPUID register value () is invalid.
+--> CPUID register value () is invalid.
+-->
+...
+2013-12-19T09:55:50.796Z [26646B70 error 'Vmsvc.vm:/vmfs/volumes/525bb453-8c4696cc-eb92-90b11c151f45/migtest4/migtest4.vmx' opID=72f92125-8d-be user=vpxuser] Invalid transition requested (VM_STATE_INVALID_CONFIG -> VM_STATE_IMMIGRATING): Invalid state
+
+Issue 2: Trying to reconfigure a VM on a ESXi 5.5 host as stated in issue 1 or following steps in update#7, hostd crashes. I was able to reproduce the issue while trying the reconfigure operation from VC as well as by directly connecting to the host. However, when tried with a 5.1 host, the operation was successful. Interestingly if you do both the changes at the same time while reconfigure, the reconfigure is successful. 
+
+cpd-hostd-guru,
+
+IMO both the issues are pointing to the mishandling of absent CPUID register values but the changes might be in different areas. I would leave it upto you if you want to track it as a single bug or clone it for the other issue. 
+
+Donald,
+
+Can you please check with the customer as to why it is important to reconfigure the VMs before migrating. If he is trying to enhance compatibility between hosts, can you advice or ask him to try using an EVC cluster for vMotions. If he is able to move VMs within the EVC cluster he might be able to avoid the downtime. 
+
+

@@ -19,12 +19,13 @@ class ScanCodeClip():
         self.dictus = enchant.Dict("en_US")
         self.dictgb = enchant.Dict("en_GB")
 
-    def __init__(self, dirname):
+    def __init__(self, dirname, table):
         self.dirname = dirname
         self.initDb()
- 
+        self.table = table
+
     def savelog(self, log):
-        query_log = ("select * from logsrc where log = \"%s\" ")  % log
+        query_log = ("select * from %s where log = \"%s\" ")  % (self.table, log)
    
         #print query_log
         self.cursor.execute(query_log)
@@ -33,9 +34,9 @@ class ScanCodeClip():
             print 'ignore ---->%s' % log
             return
    
-        add_log = ("INSERT INTO logsrc"
+        add_log = ("INSERT INTO %s"
                      "(log) "
-                     "VALUES ( \"%s\" )")  % log
+                     "VALUES ( \"%s\" )")  % (self.table, log)
    
         print("insert----> %s") % log
         self.cursor.execute(add_log) 
@@ -44,19 +45,22 @@ class ScanCodeClip():
 
     def isqualified(self, log):
         #if no charactor in the log drop it.
-        cre = re.compile(r'[a-zA-Z]')
-        if cre.search(log) is None:
-            return False
+        try:
+            cre = re.compile(r'[a-zA-Z]')
+            if cre.search(log) is None:
+                return False
 
-        #check length
-        if len(log) < 10:
-            return False
+            #check length
+            if len(log) < 10:
+                return False
 
-        #dict check
+            #dict check
     
-        if self.dictus.check(log) or self.dictgb.check(log):
+            if self.dictus.check(log) or self.dictgb.check(log):
+                return False
+            return True
+        except:
             return False
-        return True
  
     def process(self, log):
         #p = re.compile("(%[^-\s]+)|%")
@@ -93,7 +97,7 @@ class ScanCodeClip():
 
    
     def readandfindlog(self, filename):
-        #f = open('/mnt/dbc/gengshengl/src/vsphere55u3/bora/vmx/main/main.c', 'r')
+        #f = open('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmx/main/main.c', 'r')
         f = open(filename, 'r')
         line = f.read();
 
@@ -132,28 +136,29 @@ class ScanCodeClip():
         self.cnx.close()
 if __name__ == '__main__':
     #runset = sys.argv[1].split(';')
-    #loaddir("/mnt/dbc/gengshengl/src/vsphere55u3/bora/vmx")  
+    #loaddir("/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmx")  
 
     runset = []
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/vmx')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/apps')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/lib')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/vmkernel')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/modules')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/devices')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/mks')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/cim')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/vim')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/vpx')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/public')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/ui')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora-soft')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/vmcore')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere55u3/bora/vmkdrivers')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmx')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/apps')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/lib')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmkernel')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/modules')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/devices')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/mks')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/cim')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vim')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vpx')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/public')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/ui')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora-soft')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmcore')
+    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmkdrivers')
+    runset.append('/mnt/dbc/gengshengl/src/view623/mojo/')
 
     sccs = []  
     for s in runset:
-        sccs.append(ScanCodeClip(s))
+        sccs.append(ScanCodeClip(s, 'logclip_view'))
 
     for scc in sccs:
         print 'starting new ....'
