@@ -3,13 +3,15 @@ import re
 from esSearchLogClip import ESSearchLogClip 
 from mysqlLogClip import MysqlLogClip 
 from symptom import Symptom 
-from logCheckKBHtml import LogHTMLChecker
+
+reload(sys);
+sys.setdefaultencoding("utf8")
+
 
 class Builder():
     def __init__(self):
         self.es = ESSearchLogClip()
         self.logdb = MysqlLogClip()
-        self.lc = LogHTMLChecker()
 
     def parseResult(self, esraw, log):
         #drop this logclip if too many matches
@@ -40,15 +42,15 @@ class Builder():
             esraw = self.es.search(log['log'])
             
             count = count + 1
+            #print("Log %d =======>%s") % (count, log['log'])
             print("Log %d =======>%s") % (count, log['log'])
             
             result = self.parseResult(esraw, log)
 
             for kbnumber in result:
-                 if self.lc.check(kbnumber, log['log']):
-                     print("   updating sym %d") % kbnumber
-                     sym = Symptom(kbnumber)
-                     sym.addLog(log)
+                print("   updating sym %d") % kbnumber
+                sym = Symptom(kbnumber)
+                sym.addLog(log)
 
 if __name__ == '__main__':
     builder = Builder()

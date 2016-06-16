@@ -23,5 +23,6 @@ class ESSearchLogClip:
 
 if __name__ == '__main__':
     eslog = ESSearchLogClip()
-    kbs = eslog.search('one of the snapshot disks it depends on')    
-    print kbs
+    kbs = eslog.search('and try again.')    
+    kbs = eslog.search('ERROR_WAIT')    
+    print eslog.parseResult(kbs)

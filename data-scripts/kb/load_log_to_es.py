@@ -5,6 +5,7 @@ from elasticsearch import Elasticsearch
 from webpage import IKBPage
 from os import listdir
 from os.path import isfile, join
+from logCheckKBHtml import LogHTMLChecker
 
 class IKB_to_ES_Loader:
 
@@ -17,10 +18,11 @@ class IKB_to_ES_Loader:
 
     def __init__(self, dir):
         self.es = Elasticsearch()
-        self.index = 'ikb'
-        self.doc_type = 'kb'
+        self.index = 'kblog'
+        self.doc_type = 'log'
         self.kb_dir = dir 
-    #    self.create_index()      
+        self.logchecker = LogHTMLChecker()
+        self.create_index()      
     
     def create_index(self): 
         # Create an index with settings and mapping, a line is a term
@@ -41,31 +43,7 @@ class IKB_to_ES_Loader:
                 self.doc_type:{
                    'properties':{
                                                               
-                        'title':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },                                       
-			'symptoms':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'resolution':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'solution':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'purpose':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'cause':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'details':{
+			'log':{
                             'type':'string',
                             'analyzer':'whitespace'
                         },
@@ -81,19 +59,14 @@ class IKB_to_ES_Loader:
         return res    
 
     def index_item(self, page):
-	doc = {
-            'url': page.get_url(),
-            'summary': page.get_title(),
-            'symptoms': page.get_symptoms(),
-            'resolution' : page.get_resolution(),
-      	    'solution' : page.get_solution(),
-      	    'cause' : page.get_cause(),
-       	    'purpose': page.get_purpose(),
-            'details': page.get_details(),
-        }
-        res = self.es.index(index = self.index, doc_type = self.doc_type, id = page.get_id(), body = doc)
-	print 'DEBUG: indexed kb ' + str(page.get_id())
-        return res['created']
+        kblog = self.logchecker.getLog(page.get_id())
+        if len(kblog) > 0:
+	    doc = {
+                'log': kblog,
+            }
+            res = self.es.index(index = self.index, doc_type = self.doc_type, id = page.get_id(), body = doc)
+	    print 'DEBUG: indexed kb ' + str(page.get_id())
+            return res['created']
 
     def index_all(self):
         # iter all kbs
@@ -111,6 +84,6 @@ if __name__ == "__main__":
     #    exit(0)
     
     #loader = IKB_to_ES_Loader(sys.argv[1])
-    loader = IKB_to_ES_Loader('./data')
+    loader = IKB_to_ES_Loader('/data/data/kbraw/data')
 
     loader.index_all()

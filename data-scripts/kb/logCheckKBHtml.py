@@ -15,10 +15,11 @@ class MLStripper(HTMLParser):
 
 class LogHTMLChecker:
     def __init__(self, kbdir='/data/data/kbraw/data'):
-        self.reg1 = re.compile(r'(<font*.+Courier New*.+<\/font>)')
-        self.reg2 = re.compile(r'(<span*.+Courier New*.+<\/span>)')
-        self.reg3 = re.compile(r'(<li*.+Courier New*.+<\/li>)')
-        self.reg4 = re.compile(r'(<code*.+Courier New*.+<\/code>)')
+        self.regs = []
+        self.regs.append(re.compile(r'(<font[^>]+?Courier New*.+?<\/font>)'))
+        self.regs.append(re.compile(r'(<span[^>].+?Courier New*.+?<\/span>)'))
+        self.regs.append(re.compile(r'(<li[^>]+?Courier New*.+?<\/li>)'))
+        self.regs.append(re.compile(r'(<code*.+?<\/code>)'))
         self.kbdir = kbdir
 
     def strip_tags(self, html):
@@ -31,36 +32,19 @@ class LogHTMLChecker:
         f = open(self.kbdir + '/' +  str(kbnumber))
         return f.read()
         
-    def check(self, kbnumber, log):
+    def getLog(self, kbnumber):
         kblog = ""
         text = self.readfile(kbnumber)
-        m1 = self.reg1.findall(text)
-        if m1:
-            for string in m1:
-                kblog = kblog + self.strip_tags(string)
-
-            
-        m2 = self.reg2.findall(text)
-        if m2:
-            for string in m2:
-                kblog = kblog + self.strip_tags(string)
-            
-
-
-        m3 = self.reg3.findall(text)
-        if m3:
-            for string in m3:
-                kblog = kblog + self.strip_tags(string)
-
-
-        m4 = self.reg4.findall(text)
-        if m4:
-            for string in m4:
-                kblog = kblog + self.strip_tags(string)
-
-        #print kblog
+        for reg in self.regs:
+            m1 = reg.findall(text)
+            if m1:
+                for string in m1:
+                    kblog = kblog + self.strip_tags(string)
+        return kblog
+    def check(self, kbnumber, log):
+        
         try:
-            if log in kblog:
+            if log in self.getLog(kbnumber):
                 return True
         except:
             return False
@@ -72,7 +56,8 @@ if __name__ == '__main__':
     print lc.check(1037071, ' B A general system error occured')
     print lc.check(1030267, 'A general system error occured')
     print lc.check(1030267, 'write function failed')
-    
-    print sys.getdefaultencoding()
+    #print lc.getLog(1037071) 
+    #print lc.getLog(1030267) 
+    print lc.getLog(2057902) 
         
         

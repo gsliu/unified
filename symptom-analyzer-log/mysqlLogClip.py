@@ -9,18 +9,19 @@ class MysqlLogClip:
         self.cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
         self.cursor = self.cnx.cursor()
         self.cursor.execute('SELECT log, score FROM `logsrc` ')
-        self.data = self.cursor.fetchone()
+        self.data = self.cursor.fetchall()
+	self.i = 0
 
     def getNext(self):
-        if self.data:
-            olddata = self.data
-            self.data = self.cursor.fetchone()
-            return {'log':olddata[0], 'score':olddata[1]}
-            #return olddata
+        if self.i < len(self.data):
+            row = self.data[self.i]
+            self.i = self.i + 1
+            return {'log':row[0], 'score':row[1]}
+
         return None
 
     def hasNext(self):
-        if self.data:
+        if self.i < len(self.data):
             return True
         return False
     
@@ -35,8 +36,8 @@ class MysqlLogClip:
 
 
 if __name__ == '__main__':
-    loader = MysqlLoadLogClip()
-    if loader.hasNext():
+    loader = MysqlLogClip()
+    while loader.hasNext():
         print loader.getNext()
     log = {'log':'MainMem Pages mapped read', 'score':2.25}
     loader.updateScore(log)

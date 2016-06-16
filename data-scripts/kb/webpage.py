@@ -214,6 +214,8 @@ class IKBPage( WebPage ):
     
     def get_url(self):
         return self.url    
+    def get_log(self):
+        return self.log
 
 def test_rh_kb(filename):
     page = RedHatKBPage(filename)
