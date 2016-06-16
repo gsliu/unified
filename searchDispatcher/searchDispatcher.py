@@ -27,9 +27,21 @@ class TextDispatcher(Resource):
         return 'This is text get'
  
     def post(self):
-        text = request.form['text']
-        print text
-        ret = textMatcher.match(text)
+        if request.form.haskey['text']:
+            text = request.form['text']
+            print text
+            return 'Not text founded in request', 400
+
+        #by default max result is 10
+        size = 10
+        #by default minscore is 0.5
+        minscore = 0.5
+
+        if request.form.haskey['size']:
+            size = request.form['size']
+        if request.form.haskey['minscore']:
+            minscore = request.form['minscore']
+        ret = textMatcher.match(text, size, minscore)
 
         #return 'text received', 200
         return ret
