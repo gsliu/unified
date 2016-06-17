@@ -1,3 +1,4 @@
+import re
 import os
 import sys
 import itertools
@@ -24,13 +25,13 @@ def filterResult(ret, size, minscore):
             newret.append(r) 
     
 
-   rank = star(scores)
-    
+    newret = rank(newret)
+ 
     jret = []
     for r in newret:
-        page = IKBPage(r['kbnumber']
-        j = {}
-        j['url'] = 'http://kb.vmware.com/ %d' % r['kbnumber']
+        page = IKBPage('/data/data/kbraw/data/%s' %r['kbnumber'])
+        j = dict()
+        j['url'] = 'http://kb.vmware.com/%d' % r['kbnumber']
         j['title'] = page.get_title()
         j['text'] = textmatched(r,page)
         j['rank'] = r['rank']
@@ -42,18 +43,22 @@ def filterResult(ret, size, minscore):
 def textmatched(r, page):
     text = '...'
     kbtext = page.get_text()
+    #print kbtext
     
-    for log in r['log']:
+    for log in r['logs']:
        if log['matched']:
-           p = re.compile(r'%s', log['log'])
-           m = r.finditer(kbtext)
-           if m:
-               startpos = m.start()
+           
+           print log['log']
+           start = kbtext.find(log['log'])
+           if start > 0:
+
                if start < 30:
                    start = 0
+               else:
+                   start = start - 30
 	       end = start + 60 + len(log['log'])
-               text = text + logtext[start:end]
-               text = re.sub(r"%s", "<b>%s</b>" % (log['log'], log['log']), text)
+               text = text + kbtext[start:end]
+               text = re.sub(r'%s' % log['log'], '<b>%s</b> '%  log['log'], text)
            if len(text) > 200:
                break
            

@@ -5,7 +5,7 @@ import urlparse
 import re
 import os
 from HTMLParser import HTMLParser
-
+from logCheckKBHtml import MLStripper
 class WebPage:
     
     ###########################################
@@ -69,7 +69,7 @@ class WebPage:
 
 class IKBPage( WebPage ):
 
-    def __init__(self, filename):
+    def __init__(self, filename='/data/data/kbraw/data'):
         self.id = os.path.basename(filename)
         url = "http://kb.vmware.com/kb/" + str(self.id)
         with open(filename, 'r') as f:
@@ -146,7 +146,7 @@ class IKBPage( WebPage ):
         return s.get_data()
 
     def get_text(self):
-        return strip_tags(self.html)
+        return self.get_symptoms() + self.get_cause() + self.get_purpose() + self.get_details() + self.get_solution() + self.get_resolution()
 
     
 def test_ikb(filename):

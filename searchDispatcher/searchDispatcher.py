@@ -43,9 +43,9 @@ class TextDispatcher(Resource):
         if request.form.has_key('minscore'):
             minscore = request.form['minscore']
         ret = textMatcher.match(text, size, minscore)
-        print ret
 
-        return 'text received', 200
+        
+        return ret, 200
         #return ret
 
   

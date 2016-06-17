@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import mysql.connector
 import MySQLdb
 
@@ -25,7 +26,7 @@ class TextMatcher(Matcher):
             logs = []
             for log in s.getLogs():
                 if log['log'] in text:
-                    log['matched'] = 0
+                    log['matched'] = 1
 		    score = score + log['score']
                     mln = mln + 1
                 else:
@@ -47,7 +48,7 @@ class TextMatcher(Matcher):
 
 
 if __name__ == '__main__':
-    m = TextMatcher(3.0)
+    m = TextMatcher(10.0)
     #sym = m.getSymptoms()
     ret = m.match("YYYY-MM-DDT18:05:57.424Z [3DF03B90 info 'Hostsvc.HaHost'] vmxSwapEnabled = true vmmOvhd.anonymous: 22964 vmmOvhd.paged: 63957 vmmOvhd.nonpaged: 13771")
     #print ret 
