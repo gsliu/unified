@@ -17,8 +17,8 @@ class IKB_to_ES_Loader:
 
     def __init__(self, dir):
         self.es = Elasticsearch()
-        self.index = 'ikb'
-        self.doc_type = 'kb'
+        self.index = 'kb'
+        self.doc_type = 'text'
         self.kb_dir = dir 
     #    self.create_index()      
     
@@ -70,6 +70,11 @@ class IKB_to_ES_Loader:
                             'analyzer':'whitespace'
                         },
 
+			'tags':{
+                            'type':'string',
+                            'analyzer':'whitespace'
+                        },
+
 
 
 
@@ -90,17 +95,25 @@ class IKB_to_ES_Loader:
       	    'cause' : page.get_cause(),
        	    'purpose': page.get_purpose(),
             'details': page.get_details(),
+            'tags':page.get_tags()
         }
         res = self.es.index(index = self.index, doc_type = self.doc_type, id = page.get_id(), body = doc)
-	print 'DEBUG: indexed kb ' + str(page.get_id())
+	#print 'DEBUG: indexed kb ' + str(page.get_id())
         return res['created']
 
     def index_all(self):
         # iter all kbs
+        i = 0 
         for f in listdir(self.kb_dir):
-            print "DEBUG: %s" %(f)
+            i = i + 1
+            print " %d DEBUG: %s" %(i, f)
             file = join(self.kb_dir, f)
             if isfile(file):
+                kb = IKBPage(file)
+                tags = kb.get_tags()
+                if 'Chinese' in tags or 'Japanese' in tags or 'Spanish' in tags or 'Portugues' in tags:
+                    print 'ignore other langurage kb %s' % kb.get_id()
+                    continue
                 self.index_item(IKBPage(file))
 
 if __name__ == "__main__":
@@ -111,6 +124,6 @@ if __name__ == "__main__":
     #    exit(0)
     
     #loader = IKB_to_ES_Loader(sys.argv[1])
-    loader = IKB_to_ES_Loader('./data')
+    loader = IKB_to_ES_Loader('/data/data/kbraw/data')
 
     loader.index_all()

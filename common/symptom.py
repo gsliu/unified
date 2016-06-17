@@ -6,12 +6,14 @@ import MySQLdb.cursors
 class Symptom:
     def __init__(self, kb):
 
-        self.cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
-        #self.cursor = self.cnx.cursor()
-        self.cursor = self.cnx.cursor(MySQLdb.cursors.DictCursor)
+        global cnx
+        cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
+
+        global cursor
+        cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
 	sql = 'SELECT * FROM `symptom` where kbnumber = ' +  str(kb)
-        self.cursor.execute(sql)
-        self.data = self.cursor.fetchall()
+        cursor.execute(sql)
+        self.data = cursor.fetchall()
 
         #print self.data
         self.kbnumber = kb
@@ -28,8 +30,8 @@ class Symptom:
     
     def loadLog(self):
         sql = 'SELECT * FROM `log_symptom` where kbnumber = ' +  str(self.kbnumber)
-        self.cursor.execute(sql)
-        self.data = self.cursor.fetchall()
+        cursor.execute(sql)
+        self.data = cursor.fetchall()
         for row in self.data:
           # print row
            self.logs.append({'log':row[1], 'score':float(row[2])})
@@ -41,19 +43,24 @@ class Symptom:
         #print log
         sql = 'INSERT INTO `log_symptom`(`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
         print sql
-        self.cursor.execute(sql)
-        self.cnx.commit()
+        cursor.execute(sql)
+        cnx.commit()
         self.save()
 
+    def getKbnumber(self):
+        return self.kbnumber
 
+    def getScore(self):
+        return self.score
+ 
     def getLogs(self):
         return self.logs
 
     def deleteLog(self, log):
    
         sql = 'delete from log_symptom where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
-        self.cursor.execute(sql)
-        self.cnx.commit()
+        cursor.execute(sql)
+        cnx.commit()
         self.save()
         self.logcount = self.logcount - 1
         self.symptomscore = self.symptomscore - log['score']  
@@ -68,8 +75,8 @@ class Symptom:
             sql = 'UPDATE symptom SET `kbnumber`= "%d",`symptomscore`=%2.8f, `logcount` = %d WHERE `kbnumber`=%d ' % (self.kbnumber, self.symptomscore, self.logcount, self.kbnumber)
             
         #print sql
-        self.cursor.execute(sql)
-        self.cnx.commit()
+        cursor.execute(sql)
+        cnx.commit()
 
 
 

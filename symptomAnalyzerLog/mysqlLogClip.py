@@ -5,10 +5,11 @@ import mysql.connector
 
 
 class MysqlLogClip:
-    def __init__(self):
+    def __init__(self, table):
+        self.table = table
         self.cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
         self.cursor = self.cnx.cursor()
-        self.cursor.execute('SELECT log, score FROM `logsrc` ')
+        self.cursor.execute('SELECT log, score FROM %s ' % self.table)
         self.data = self.cursor.fetchall()
 	self.i = 0
 
@@ -24,11 +25,13 @@ class MysqlLogClip:
         if self.i < len(self.data):
             return True
         return False
+    def getTable(self):
+        return self.table
     
     def updateScore(self, log):
         ucnx = mysql.connector.connect(user='root',password='vmware', database='unified')
         ucursor = ucnx.cursor()
-        sql = ('UPDATE `logsrc` SET `score`=%2.8f WHERE log = "%s"') % (log['score'], log['log'])
+        sql = ('UPDATE %s SET `score`=%2.8f WHERE log = "%s"') % (self.table, log['score'], log['log'])
         #print sql
         ucursor.execute(sql)
         ucnx.commit()
@@ -36,7 +39,7 @@ class MysqlLogClip:
 
 
 if __name__ == '__main__':
-    loader = MysqlLogClip()
+    loader = MysqlLogClip('logclip_view')
     while loader.hasNext():
         print loader.getNext()
     log = {'log':'MainMem Pages mapped read', 'score':2.25}
