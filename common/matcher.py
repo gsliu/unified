@@ -17,7 +17,7 @@ class Matcher:
         cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
         sql = 'SELECT kbnumber FROM `symptom` where symptomscore > %2.8f ' % minscore
         #sql = u'SELECT * FROM symptom'
-        print sql
+        #print sql
         cursor.execute(sql)
         data = cursor.fetchall()
         
@@ -31,6 +31,7 @@ class Matcher:
             #print t.getLogs()
             s.append(t)
         return s
+
     def getSymptoms(self):
         return self.symptoms
 

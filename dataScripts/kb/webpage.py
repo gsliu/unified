@@ -4,6 +4,7 @@ import lxml.html    # python-lxml
 import urlparse
 import re
 import os
+from HTMLParser import HTMLParser
 
 class WebPage:
     
@@ -82,6 +83,7 @@ class IKBPage( WebPage ):
         self.symptoms_class_name = "cc_Symptoms"
         self.tags_class_name = "cc_Tags"
         self.body_els = self.doc.findall('./body/')
+        
         if len(self.body_els) > 1:
             pass
             #print "Warning: more than one body in html"
@@ -134,8 +136,19 @@ class IKBPage( WebPage ):
 
     def get_url(self):
         return self.url    
+
     def get_log(self):
         return self.log
+
+    def strip_tags(self, html):
+        s = MLStripper()
+        s.feed(html)
+        return s.get_data()
+
+    def get_text(self):
+        return strip_tags(self.html)
+
+    
 def test_ikb(filename):
     page = IKBPage(filename)
     

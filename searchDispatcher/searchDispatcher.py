@@ -7,12 +7,13 @@ import json
 sys.path.append('..')
 from common.textMatcher import TextMatcher
 from common.indexMatcher import IndexMatcher
+import task
 
 
 
-#matcher.....
+#init matcher....this may take long time.
 textMatcher = TextMatcher()
-indexMatcher = IndexMatcher()
+#indexMatcher = IndexMatcher()
     
 
 #dispatch text
@@ -23,28 +24,29 @@ class TextDispatcher(Resource):
     
 
     def get(self):
-        #self.m = TextMatcher()
         return 'This is text get'
  
     def post(self):
-        if request.form.haskey['text']:
+        if request.form.has_key('text'):
             text = request.form['text']
             print text
-            return 'Not text founded in request', 400
+        else:
+            return 'No text founded in request', 400
 
         #by default max result is 10
         size = 10
         #by default minscore is 0.5
         minscore = 0.5
 
-        if request.form.haskey['size']:
+        if request.form.has_key('size'):
             size = request.form['size']
-        if request.form.haskey['minscore']:
+        if request.form.has_key('minscore'):
             minscore = request.form['minscore']
         ret = textMatcher.match(text, size, minscore)
+        print ret
 
-        #return 'text received', 200
-        return ret
+        return 'text received', 200
+        #return ret
 
   
 #dispatch file
@@ -53,12 +55,29 @@ class TextDispatcher(Resource):
 #fieldname:file
 class FileDispatcher(Resource):
     def post(self):
-        file = request.files['file']
-        if file:
-            f_name = file.filename
-            print f_name
-            file.save(os.path.join('/tmp/', f_name))
-            return json.dumps({'filename':f_name})
+        text = None
+        file = None
+        print request
+        if request.form.has_key('file'):
+            file = request.files['file']
+        if request.form.has_key('text'):
+            text = request.form['text']
+
+        if file == None and text == None:
+            return 'No file nor text found', 400
+        else: 
+            id = createTask()
+            print id
+            if file:
+                f_name = file.filename
+                print f_name
+                file.save(os.path.join('/data/data/bundle/task%d' % id, f_name))
+            if text:
+                t_file = open(os.path.join('/data/data/bundle/task%d' % id, 'text'), 'w')
+                t_file.write(text)
+                t_file.close()
+            startTask(id)
+            return 'start task %d' % id, 200
         return 'upload failed', 500
 
    
