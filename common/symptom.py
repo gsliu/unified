@@ -3,15 +3,16 @@ import MySQLdb
 import mysql.connector
 import MySQLdb.cursors
 
+
+
+#global connection
+cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
+cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
+
 class Symptom:
     def __init__(self, kb):
 
-        global cnx
-        cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
-
-        global cursor
-        cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
-	sql = 'SELECT * FROM `symptom` where kbnumber = ' +  str(kb)
+sql = 'SELECT * FROM `symptom` where kbnumber = ' +  str(kb)
         cursor.execute(sql)
         self.data = cursor.fetchall()
 

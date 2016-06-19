@@ -1,18 +1,20 @@
 import sys
 from flask import Flask
+from flask import jsonify
 from flask_restful import request, reqparse, abort, Api, Resource
 import os
 import json
-
 sys.path.append('..')
 from common.textMatcher import TextMatcher
 from common.indexMatcher import IndexMatcher
+from common.symptomHits import SymptomHits
 import task
 
 
 
 #init matcher....this may take long time.
 textMatcher = TextMatcher()
+sh = SymptomHits()
 #indexMatcher = IndexMatcher()
     
 
@@ -43,9 +45,10 @@ class TextDispatcher(Resource):
         if request.form.has_key('minscore'):
             minscore = request.form['minscore']
         ret = textMatcher.match(text, size, minscore)
+        print ret
 
         
-        return ret, 200
+        return json.dumps(ret), 200, {'Access-Control-Allow-Origin': '*'} 
         #return ret
 
   
@@ -54,6 +57,7 @@ class TextDispatcher(Resource):
 #action:post
 #fieldname:file
 class FileDispatcher(Resource):
+
     def post(self):
         text = None
         file = None
@@ -77,7 +81,7 @@ class FileDispatcher(Resource):
                 t_file.write(text)
                 t_file.close()
             startTask(id)
-            return 'start task %d' % id, 200
+            return 'start task %d' % id, 200, {'Access-Control-Allow-Origin': '*'} 
         return 'upload failed', 500
 
    
@@ -107,8 +111,7 @@ class TaskDispatcher(Resource):
 
 class PRDispatcher(Resource):
     def get(self):
-        return 'This is text get'
- 
+        return "haha" 
     def post(self):
         args = parser.parse_args()
         pr = args['pr']
@@ -135,6 +138,24 @@ class SRDispatcher(Resource):
         return 'sr received', 200
 
 
+class TopHitKB(Resource):
+    def get(self):
+        print sh.topHitsFull()
+        return json.dumps(sh.topHitsFull()), 200, {'Access-Control-Allow-Origin': '*'}
+
+ 
+    def post(self):
+        args = parser.parse_args()
+        sr = args['sr']
+        #####Todo...
+
+        return 'sr received', 200
+
+
+
+
+
+
 
 
 
@@ -151,6 +172,9 @@ class Service:
         self.api.add_resource(TaskDispatcher, '/task')
         self.api.add_resource(PRDispatcher, '/pr')
         self.api.add_resource(SRDispatcher, '/sr')
+         
+        #service to list top hit KB
+        self.api.add_resource(TopHitKB, '/tophit')
  
 
     def start(self):

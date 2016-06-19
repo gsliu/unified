@@ -12,11 +12,13 @@ from filterResult import filterResult
 
 #from symptom import Symptom
 from matcher import Matcher
+from symptomHits import SymptomHits
 
-
+sh = SymptomHits()
 
 class TextMatcher(Matcher):
 
+    #core matchting algorithm
     def match(self, text, size=10, minscore=0.5):
         ret = []
         for s in self.symptoms:
@@ -37,7 +39,11 @@ class TextMatcher(Matcher):
             if mln > 0:
                 ret.append({'kbnumber':s.getKbnumber(), 'score':score, 'matchedlog':mln, 'logs':logs})
 
+        #update hits
         fret = filterResult(ret, size, minscore)
+        for r in fret:
+            sh.hit(r['kbnumber'])
+
 
         print fret
         return fret

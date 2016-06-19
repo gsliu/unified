@@ -2,7 +2,7 @@ import sys
 import re
 from esSearchLogClip import ESSearchLogClip 
 from mysqlLogClip import MysqlLogClip 
-sys.path.append("..")
+sys.path.append("...")
 print sys.path
 
 from common.symptom import Symptom 
@@ -62,6 +62,5 @@ class Builder():
 
 if __name__ == '__main__':
     builder = Builder()
-    #builder.addLogTable('logclip_view')
-    builder.addLogTable('logclip')
+    builder.addLogTable('logclip_view')
     builder.process()

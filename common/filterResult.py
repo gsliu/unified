@@ -31,7 +31,7 @@ def filterResult(ret, size, minscore):
     for r in newret:
         page = IKBPage('/data/data/kbraw/data/%s' %r['kbnumber'])
         j = dict()
-        j['url'] = 'http://kb.vmware.com/%d' % r['kbnumber']
+        j['url'] = 'http://kb.vmware.com/kb/%d' % r['kbnumber']
         j['title'] = page.get_title()
         j['text'] = textmatched(r,page)
         j['rank'] = r['rank']
@@ -58,9 +58,15 @@ def textmatched(r, page):
                    start = start - 30
 	       end = start + 60 + len(log['log'])
                text = text + kbtext[start:end]
-               text = re.sub(r'%s' % log['log'], '<b>%s</b> '%  log['log'], text)
+               try:
+                   text = re.sub(r'%s' % log['log'], '<b>%s</b> '%  log['log'], text)
+               except:
+                   pass
+
            if len(text) > 200:
                break
+           if text < 100:
+              text = kbtext[0:100]
            
            
     text = text + '...'
