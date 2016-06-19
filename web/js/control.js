@@ -17,83 +17,112 @@
  */
 
 
-function makefirstsearch() {
-    $('#div_search_input').hide();
+// A $( document ).ready() block.
+$( document ).ready(function() {
+    console.log( "ready!" );
+    listtophits();
+});
 
-    $('#div_search_bar').show();
+function makesearch() {
+
+    $('#div_top_hit').hide();
+
     $('#div_search_result').show();
 
-    var query = $('#search_input').val();
-    $('#search_bar_input').val(query)
-    console.log(query);
-    makesearch(query);
-}
 
-function makelatersearch() {
-    var query = $('#search_bar_input').val();
+    var query = $('#text_search_input').val();
+    //var query = document.getElementById('text_search_input').val()
     console.log(query);
-    makesearch(query);
-
+    search(query);
 }
 
 
-function makesearch(query) {
-    query = query.toLowerCase()
+function search(query) {
+    //query = query.toLowerCase()
     query = query.replace(/\r?\n|\r/g, " ");
     console.log("searching ...." + query);
     $.ajax({
-        type: "get",
-        url: "http://unified.eng.vmware.com:8080/SearchDispatcher/rest/search?q=" + query,
-        //data: 'q=' + query,
+        type: "post",
+        url: "http://unified.eng.vmware.com:8000/text",
+        data: "text=" + query,
         cache: false, //......
         success: function (res) {
 
-
-            $("#searchResultsContent").empty();
+            //display the result
+            $("#div_search_result").empty();
             res = JSON.parse(res);
-            console.log(res['hits']);
+            console.log(res);
+            if(res.length > 0) {
+                //show the total result number
+                $("#div_search_result").append('<h3 class="page-header"> About ' + res.length + ' results<small>0.6 seconds</small> </h3>');
 
-            if (res['hits']['total'] != 0) {
-                for (var i = 0; i < res['hits']['hits'].length; i++) {
+                //show in div div_search_result
+                for (var i = 0; i < res.length; i++) {
+                    var result = res[i];
 
-
-                    var result = res['hits']['hits'][i];
-                    if (result['_index'] === "bugzilla") {
-                        console.log("bug = " + result['_id']);
-                        $("#div_search_result").append('<div class="user" style="width: 1200.720;"><li class="b-bd-t1-gray" style="padding-bottom: 15px;">' +
-                            '<div class="a-row b-row pd-t10 pd-b20">' +
-                            '<h5><a class="l-para-head no-bd-t" href=' + result['_source']['url'] + 'target="_blank">' + result['_source']['summary'] + '</a></h5>' +
-                            '<p class="c-body pd-t5" style="margin-bottom: 4px;">' + result['_source']['text'] + '</p>' +
-                            '<a class="c-body" href="' + result['_source']['url']  +
-                            '" target="_blank">' +  result['_source']['url'] + '</a></div>' +
-                            '</li>');
-
-                    } else if (result['_index'] === "ikb") {
-                        console.log("ikb = " + result['_id']);
-                        $("#div_search_result").append('<li class="b-bd-t1-gray" style="padding-bottom: 15px;">' +
-                            '<div class="a-row b-row pd-t10 pd-b20">' +
-                            '<h5><a class="l-para-head no-bd-t" href=' + result['_source']['url'] + 'target="_blank">' + result['_source']['summary'] + '</a></h5>' +
-                            '<p class="c-body pd-t5" style="margin-bottom: 4px;">' + result['_source']['syptom'] + '</p>' +
-                            '<a class="c-body" href="' + result['_source']['url']  +
-                            '" target="_blank">' +  result['_source']['url'] + '</a></div>' +
-                            '</li></div>');
-                    }
+                    kbhtml = '<div><h3><a href="' + result["url"] + '">' + result["title"] + '</a></h3><p>' + result["text"] + '</p> <p>Star icon as a link:' +
+                        '<a href="#"> <span class="glyphicon glyphicon-star"></span> </a>' +
+                        '<a href="#"><span class="glyphicon glyphicon-star"></span> </a>' +
+                        '<a href="#"><span class="glyphicon glyphicon-star"></span></a>' +
+                        '<a href="#"><span class="glyphicon glyphicon-star"></span></a>' +
+                        '<a href="#"><span class="glyphicon glyphicon-star"></span> </a>' +
+                        '</p> <p><a class="btn btn-primary" href="#">Comments <span class="glyphicon glyphicon-chevron-right"></span></a></p><hr></div>'
 
 
-                    /*
-                     $("#div_search_result").append('<li class="b-bd-t1-gray" style="padding-bottom: 15px;">' +
-                     '<div class="a-row b-row pd-t10 pd-b20">' +
-                     '<h3><a class="l-para-head no-bd-t" href=' + kb['U'] + 'target="_blank">' + kb['T'] + '</a></h3>' +
-                     '<p class="c-body pd-t5" style="margin-bottom: 4px;">' + kb['S'] + '</p>' +
-                     '<a class="c-body" href="' + kb['UE']  +
-                     '" target="_blank">' +  kb['UE'] + '</a></div>' +
-                     '</li>');
-                     */
-
-
+                    $("#div_search_result").append(kbhtml);
                 }
+
+
+            } else {
+                //no result found...
+
             }
+
+
 
         }
     })
 }
+
+
+
+function listtophits() {
+
+    $.ajax({
+        type: "get",
+        url: "http://unified.eng.vmware.com:8000/tophit",
+        //data: "text=" + query,
+        cache: false, //......
+        success: function (res) {
+
+            //display the result
+            $("#div_top_hit").empty();
+            res = JSON.parse(res);
+            console.log(res);
+            if(res.length > 0) {
+                //show the total result number
+
+
+                //show in div div_search_result
+                for (var i = 0; i < res.length; i++) {
+                    var result = res[i];
+
+                    kbhtml = '<div><h3><a href="' + result["url"] + '">' + result["title"] + '</a></h3><p>' + result["text"] +
+                        '</p> <b>' + res[i]['hits']+ '</b> this week </p> ' +
+                    ' <hr></div>'
+
+                    $("#div_top_hit").append(kbhtml);
+                }
+
+
+            } else {
+                //no result found...
+
+            }
+
+
+
+        }
+    })
+}
+
