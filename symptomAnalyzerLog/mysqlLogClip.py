@@ -1,11 +1,9 @@
 import re
 import mysql
 import mysql.connector
-
-ucnx = mysql.connector.connect(user='root',password='vmware', database='unified')
-ucursor = ucnx.cursor()
  
-
+ucnx = mysql.connector.connect(user='root',password='vmware', database='unified')
+     
 class MysqlLogClip:
     def __init__(self, table):
         self.table = table
@@ -31,11 +29,17 @@ class MysqlLogClip:
         return self.table
     
     def updateScore(self, log):
+ 
+#        ucnx = mysql.connector.connect(user='root',password='vmware', database='unified')
+        ucursor = ucnx.cursor()
+ 
         sql = ('UPDATE %s SET `score`=%2.8f WHERE log = "%s"') % (self.table, log['score'], log['log'])
         #print sql
         ucursor.execute(sql)
         ucnx.commit()
-        ucnx.close()
+#        ucursor.close()
+#        ucnx.close()
+
 
 
 if __name__ == '__main__':

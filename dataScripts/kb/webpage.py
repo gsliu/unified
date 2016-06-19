@@ -148,6 +148,10 @@ class IKBPage( WebPage ):
     def get_text(self):
         return self.get_symptoms() + self.get_cause() + self.get_purpose() + self.get_details() + self.get_solution() + self.get_resolution()
 
+ 
+    def get_fulltext(self):
+        return self.get_title() + self.get_symptoms() + self.get_cause() + self.get_purpose() + self.get_details() + self.get_solution() + self.get_resolution()
+
     
 def test_ikb(filename):
     page = IKBPage(filename)

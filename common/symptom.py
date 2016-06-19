@@ -12,7 +12,7 @@ cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
 class Symptom:
     def __init__(self, kb):
 
-sql = 'SELECT * FROM `symptom` where kbnumber = ' +  str(kb)
+        sql = 'SELECT * FROM `symptom` where kbnumber = ' +  str(kb)
         cursor.execute(sql)
         self.data = cursor.fetchall()
 

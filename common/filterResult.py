@@ -32,6 +32,7 @@ def filterResult(ret, size, minscore):
         page = IKBPage('/data/data/kbraw/data/%s' %r['kbnumber'])
         j = dict()
         j['url'] = 'http://kb.vmware.com/kb/%d' % r['kbnumber']
+        j['kbnumber'] = r['kbnumber']
         j['title'] = page.get_title()
         j['text'] = textmatched(r,page)
         j['rank'] = r['rank']
