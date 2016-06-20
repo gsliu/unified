@@ -29,19 +29,21 @@ function makesearch() {
 
     $('#div_search_result').show();
 
-
-    var query = $('#text_search_input').val();
-    //var query = document.getElementById('text_search_input').val()
-    console.log(query);
-    search(query);
+    if($('#input_file_upload').get(0).files[0] == "") {
+        textsearch();
+    } else {
+        filesearch();
+    }
 }
 
 
-function search(query) {
+function textsearch() {
     //query = query.toLowerCase()
-    //
+    var query = $('#text_search_input').val();
+    console.log("textMatch::" + query);
+
     var t1 = new Date();
-   query = query.replace(/\r?\n|\r/g, " ");
+    query = query.replace(/\r?\n|\r/g, " ");
     console.log("searching ...." + query);
     $.ajax({
         type: "post",
@@ -105,6 +107,7 @@ function search(query) {
 function displayhits() {
     $('#div_top_hit').show()
     $('#div_search_result').hide();
+    listtophits()
 }
 
 
@@ -152,3 +155,30 @@ function listtophits() {
     })
 }
 
+function filesearch() {
+    console.log("handleFileUpload called");
+    var query = $('#text_search_input').val();
+
+    var url = "http://unified.eng.vmware.com:8000/file";
+
+    var file = $('#input_file_upload').get(0).files[0];
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('text', query);
+
+    $.ajax({
+        url: url,
+        type: "post",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(){
+            //$("#file_upload_result").html('submitted successfully');
+            console.log("upload successfully")
+        },
+        error:function(){
+            //$("#file_upload_result").html('there was an error while submitting');
+            console.log("upload failed")
+        }
+    });
+}
