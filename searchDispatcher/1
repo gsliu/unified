@@ -1,8 +1,8 @@
 import os
 import tarfile
 
-g_after_extract_path='/data/data/bundle_after_extract/'
-g_before_extract_path='/data/data/bundle_before_extract/'
+g_after_extract_path='/data/data/bundle/task'
+g_before_extract_path='/data/data/bundle/task'
 
 class logExtractor:
     'Base class to extract log bundles of ESXi, VC or other product'
@@ -14,11 +14,13 @@ class esxiLogExtractor(logExtractor):
     'for exi, *.tgz'
     def __init__(self, file):
         logExtractor.__init__(self, file)
-    def extract(self):
+
+    def extract(self, filename):
         print 'Initing ESXi extractor...'
-        split_filename = self.file.rsplit('.', 1)
+        print filename
+        split_filename = filename.rsplit('.', 1)
         if "tgz" in split_filename:
-            fn = self.file.decode('unicode-escape')
+            fn = filename.decode('unicode-escape')
             tar = tarfile.open(fn, "r:gz")
             extracted = tar.next().name.split("/")[0]
           
@@ -31,6 +33,16 @@ class esxiLogExtractor(logExtractor):
 
         else:
             print "The service bundle of ESXi host should by *.tgz, please check"
+
+    def extractAllFiles(self):
+        files = os.listdir(self.file)
+        print files
+        for f in files:
+            if 'tgz' in f:
+                print f
+                self.extract(self.file + f)
+            
+        
 
 class vcLogExtractor(logExtractor):
     'for vc, *.gz'
@@ -48,9 +60,9 @@ class urlLogExtractor(logExtractor):
         pass
 
 
+
+
 if __name__ == '__main__':
-    bundle = "vmvspm0141.nm.nmfco.com-vmsupport-2016-02-23@15-05-08.tgz"
-    bundle_full_path = g_before_extract_path + bundle
-    esx = esxiLogExtractor(bundle_full_path)
-    ret = esx.extract()
+    esx = esxiLogExtractor('/data/data/bundle/task1011/')
+    ret = esx.extractAllFiles()
     print ret

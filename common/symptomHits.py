@@ -4,6 +4,7 @@ import mysql.connector
 import MySQLdb.cursors
 import sys
 import json
+import datetime
 sys.path.append('..')
 
 from dataScripts.kb.webpage import IKBPage
@@ -26,10 +27,12 @@ class SymptomHits:
         for row in data:
           # print row
            ret.append({'kbnumber':row[0], 'hits':row[1]})
+        ret = ret[0:15]
         return ret
 
     def hit(self, kbnumber):
-        sql = 'INSERT INTO `symptom_hits`(`kbnumber`, `hits` ) VALUES (%d, 1)' % ( kbnumber)
+        #d = datetime.datetime.strptime('my date', "%b %d %Y %H:%M")
+        sql = 'INSERT INTO `symptom_hits`(`kbnumber`, `hits`, `time` ) VALUES (%d, 1, CURRENT_DATE())' % ( kbnumber)
         print sql
         cursor.execute(sql)
         cnx.commit()
@@ -61,6 +64,18 @@ class SymptomHits:
         jret = jret[0:10]
         return jret
         #print j
+    def getGroupHits(self, kbnumber):
+        sql = 'SELECT DATE(time) DateOnly,  SUM(hits) FROM symptom_hits where kbnumber = %d GROUP BY DateOnly' % kbnumber
+        print sql
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        ret = []
+        for d in data:
+            h = {'time':d[0], 'hits':d[1]}
+            ret.append(h)
+        return ret
+        
+ 
 
 
 
@@ -73,10 +88,10 @@ if __name__ == "__main__":
     s.hit(1009484)
     s.hit(1031636)
     s.hit(1005266)   
-    s.hit(2101938)   
-    s.hit(2101938)   
     print s.topHits()
 
     print s.topHitsFull()
     print json.dumps(s.topHitsFull())
+    
+    print s.getGroupHits(1031636)
         

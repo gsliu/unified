@@ -3,6 +3,9 @@ import thread
 import re 
 import mysql 
 import mysql.connector 
+import sys
+sys.path.append('..')
+from common.indexLogs import IndexLogs
  
  
  
@@ -43,7 +46,10 @@ def createTask():
     return id
 
 def runTask(id):
-    print 'running task %d' % id
+    dirname = '/data/data/bundle/task%d' % id
+    indexname = 'task%d' %id
+    il = IndexLogs(dirname, indexname)
+    print 'indexing task... %d' % id
 
 def startTask(id):
     thread.start_new_thread ( runTask, (id,) )
@@ -51,20 +57,10 @@ def startTask(id):
 
 
 if __name__ == '__main__':
-    id = insertTask() 
-    print id
-    print queryTask(id)
-    updateTask(id, 1)
-    print queryTask(id)
-    print queryTask(1004)
-    id = createTask()
-    startTask(id)
-    id = createTask()
-    startTask(id)
-    id = createTask()
-    startTask(id)
-    id = createTask()
-    startTask(id)
+    #startTask(id)
+    #id = createTask()
+    startTask(1066)
     
     while 1:
+        print 'done'
         pass 

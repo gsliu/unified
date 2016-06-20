@@ -7,8 +7,11 @@ import json
 sys.path.append('..')
 from common.textMatcher import TextMatcher
 from common.indexMatcher import IndexMatcher
+from common.indexLogs import IndexLogs
+from common.symptom import Symptom
 from common.symptomHits import SymptomHits
-import task
+from task import createTask, startTask
+from dataScripts.kb.webpage import IKBPage
 
 
 
@@ -61,9 +64,12 @@ class FileDispatcher(Resource):
     def post(self):
         text = None
         file = None
-        print request
-        if request.form.has_key('file'):
+
+        print request.files
+        if request.files.has_key('file'):
             file = request.files['file']
+            print file
+            #file = files[0]
         if request.form.has_key('text'):
             text = request.form['text']
 
@@ -71,7 +77,7 @@ class FileDispatcher(Resource):
             return 'No file nor text found', 400
         else: 
             id = createTask()
-            print id
+            print 'Create Task %d' % id
             if file:
                 f_name = file.filename
                 print f_name
@@ -81,7 +87,7 @@ class FileDispatcher(Resource):
                 t_file.write(text)
                 t_file.close()
             startTask(id)
-            return 'start task %d' % id, 200, {'Access-Control-Allow-Origin': '*'} 
+            return json.dumps({'task':id} ), 200, {'Access-Control-Allow-Origin': '*'} 
         return 'upload failed', 500
 
    
@@ -153,6 +159,27 @@ class TopHitKB(Resource):
 
 
 
+class SymptomDetail(Resource):
+    def get(self):
+        kbnumber = request.args.get('kbnumber')
+        print kbnumber
+        s = Symptom(kbnumber)
+        page = IKBPage('/data/data/kbraw/data/' + kbnumber)
+        ret = {
+                  'url': 'http://kb.vmware.com/kb/' + kbnumber,
+                  'title': page.get_title(),
+                  'text': page.get_text(),
+                  'log':s.getLogs(),
+                  'hits': sh.getGroupHits(int(kbnumber)),
+               }
+        print ret
+        return json.dumps(ret), 200, {'Access-Control-Allow-Origin': '*'}
+
+ 
+
+
+
+
 
 
 
@@ -175,6 +202,7 @@ class Service:
          
         #service to list top hit KB
         self.api.add_resource(TopHitKB, '/tophit')
+        self.api.add_resource(SymptomDetail, '/symptom')
  
 
     def start(self):
