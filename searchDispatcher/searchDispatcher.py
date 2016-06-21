@@ -211,10 +211,7 @@ class LogDetails(Resource):
     def get(self, kbnumber):
         print kbnumber
         s = Symptom(kbnumber)
-        ret = 'name,count'
-        for log in s.getLogs():
-            ret = ret + log['log'] + ',' + str(int(log['score']*10 + 1) ) + '\n'
-             
+        ret = s.getLogsDemo()
         print ret
         r = make_response(ret)
         r.headers['Content-Type'] = 'text/plain'
