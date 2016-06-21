@@ -42,7 +42,8 @@
     <script src="js/control.js"></script>
     <script src="js/util.js"></script>
 
-    <script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+    <script src="js/highcharts.src.js"></script>
+
     <script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
 
 
@@ -117,7 +118,7 @@
                 </p>
 
 
-                <b>16 hits</b> this week <p></p>
+                <b>16 hits</b> totally <p></p>
 
                 <hr>
             </div>
@@ -149,7 +150,7 @@
 
 
     <script type="text/javascript">
-
+      var oPerfChart;
       function refreshChart() {
           //异步请求数据
           $.ajax({
@@ -160,19 +161,20 @@
                   //定义一个数组
                   var series_data = [];
                   var res = JSON.parse(data);
-                  
-                  var hits = 0;
+                  var hits = eval(res['hits']);
+                  var mydate;
+
                   //迭代，把异步获取的数据放到数组中
-                  $.each(data, function (i, elem) {
-                      mydate = new Date(elem[0])
-                      //                mydate=elem[0];
-                      hits = elem[1];
-                      series_data.push([Date.parse(mydate), hits]);
+                  $.each(hits, function (i, elem) {
 
-                      //设置数据
-                      oPerfChart.series[0].setData(series_data);
 
+                      series_data.push([Date.parse(elem['time']), parseInt(elem['hits'])]);
+                      console.log("aaaa");
                   });
+                  //设置数据
+                  oPerfChart.series[0].setData(series_data);
+
+
               },
               error: function (e) {
                   console.log("Cannot get symptom data, check database\n");
@@ -188,9 +190,11 @@
 
 
         $(function () {
-            $('#divHitsChart').highcharts({
+             oPerfChart = new Highcharts.Chart({
                 chart: {
-                    type: 'column'
+                    type: 'column',
+                    renderTo: 'divHitsChart'
+
                 },
                 title: {
                     text: 'Symptom hits history'
@@ -200,9 +204,9 @@
                 },
                 xAxis: {
                     type: 'datetime',
-                    dateTimeLabelFormats: { // don't display the dummy year
-                        month: '%e. %b',
-                        year: '%b'
+
+                    formatter: function () {
+                        return Highcharts.dateFormat('%a %d %b', this.value);
                     },
                     title: {
                         text: 'Date'
@@ -214,10 +218,7 @@
                     },
                     min: 0
                 },
-                tooltip: {
-                    headerFormat: '<b>{series.name}</b><br>',
-                    pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
-                },
+
 
                 plotOptions: {
                     spline: {
@@ -228,7 +229,7 @@
                 },
 
                 series: [{
-                    name: 'Winter 2014-2015',
+                    name: 'Hits/Day',
                     yAxis: 0
 
 
@@ -249,4 +250,3 @@
 </body>
 
 </html>
-
