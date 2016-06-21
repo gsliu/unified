@@ -46,7 +46,7 @@ def createTask():
     os.mkdir('/data/data/bundle/task%d'% id)
     return id
 
-def runTask(id):
+def startTask(id):
     dirname = '/data/data/bundle/task%d' % id
     indexname = 'task%d' %id
     #extract log
@@ -61,8 +61,8 @@ def runTask(id):
     print 'finished task... %d' %id
     updateTask(id, 1)
 
-def startTask(id):
-    thread.start_new_thread ( runTask, (id,) )
+#def startTask(id):
+#    thread.start_new_thread ( runTask, (id,) )
     
 
 

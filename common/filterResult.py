@@ -87,6 +87,8 @@ def rank(ret):
     
 
 def star(listofscore):
+    if len(listofscore) == 0:
+        return []
     star = []
     lessthan_ave = []
     ave_number = sum(listofscore)/len(listofscore)

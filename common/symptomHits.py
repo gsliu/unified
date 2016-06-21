@@ -71,7 +71,6 @@ class SymptomHits:
         data = cursor.fetchall()
         ret = []
         for d in data:
-            #print d
             h = {'time':d[0], 'hits':d[1]}
             ret.append(h)
         print ret

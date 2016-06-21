@@ -26,7 +26,7 @@ class ComplexEncoder(json.JSONEncoder):
 #init matcher....this may take long time.
 textMatcher = TextMatcher()
 sh = SymptomHits()
-#indexMatcher = IndexMatcher()
+indexMatcher = IndexMatcher()
     
 
 #dispatch text
@@ -94,8 +94,13 @@ class FileDispatcher(Resource):
                 t_file = open(os.path.join('/data/data/bundle/task%d' % id, 'text'), 'w')
                 t_file.write(text)
                 t_file.close()
+            #extract the bundle
             startTask(id)
-            return json.dumps({'task':id} ), 200, {'Access-Control-Allow-Origin': '*'} 
+            #do search
+            ret = indexMatcher.match('task%d' % id, 0.3)
+
+               
+            return json.dumps(ret ), 200, {'Access-Control-Allow-Origin': '*'} 
         return 'upload failed', 500
 
    
