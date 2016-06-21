@@ -19,6 +19,7 @@
     <!-- Custom CSS -->
     <link href="css/heroic-features.css" rel="stylesheet">
     <!-- jQuery -->
+
     <script src="js/jquery.js"></script>
 
 
@@ -32,12 +33,19 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 
+
+
     <![endif]-->
 
 
     <!-- Controler -->
     <script src="js/control.js"></script>
     <script src="js/util.js"></script>
+
+    <script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+    <script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
+
+
 
 </head>
 
@@ -107,14 +115,22 @@
                         The vpxd.log file contains entries similar to:No...
                     </not-found.>
                 </p>
+
+
                 <b>16 hits</b> this week <p></p>
+
                 <hr>
             </div>
+
+
         </div>
 
 
     </div>
 
+    <div class="row">
+        <div id="divHitsChart" style="height: 300px; margin: 0 auto"></div>
+    </div>
 
     <div class="row">
         <hr>
@@ -130,6 +146,104 @@
 
     </div>
 </div>
+
+
+    <script type="text/javascript">
+
+      function refreshChart() {
+          //异步请求数据
+          $.ajax({
+              type: "GET",
+              url: 'http://unified.eng.vmware.com:8000/symptom',// hard code kb number for debugging
+              data: {kbnumber: 2120653},
+              success: function (data) {
+                  //定义一个数组
+                  var series_data = [];
+                  var res = JSON.parse(data);
+                  
+                  var hits = 0;
+                  //迭代，把异步获取的数据放到数组中
+                  $.each(data, function (i, elem) {
+                      mydate = new Date(elem[0])
+                      //                mydate=elem[0];
+                      hits = elem[1];
+                      series_data.push([Date.parse(mydate), hits]);
+
+                      //设置数据
+                      oPerfChart.series[0].setData(series_data);
+
+                  });
+              },
+              error: function (e) {
+                  console.log("Cannot get symptom data, check database\n");
+              }
+
+          });
+
+      }
+
+
+
+
+
+
+        $(function () {
+            $('#divHitsChart').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Symptom hits history'
+                },
+                subtitle: {
+                    text: 'hits data for each symptom'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: { // don't display the dummy year
+                        month: '%e. %b',
+                        year: '%b'
+                    },
+                    title: {
+                        text: 'Date'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Hits'
+                    },
+                    min: 0
+                },
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br>',
+                    pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+                },
+
+                plotOptions: {
+                    spline: {
+                        marker: {
+                            enabled: true
+                        }
+                    }
+                },
+
+                series: [{
+                    name: 'Winter 2014-2015',
+                    yAxis: 0
+
+
+                }]
+            });
+
+
+        });
+
+    refreshChart()
+
+
+
+    </script>
+
 
 
 </body>
