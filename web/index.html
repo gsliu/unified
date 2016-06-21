@@ -3,7 +3,6 @@
 <!-- /.container -->
 
 
-
 <head>
 
     <meta charset="utf-8">
@@ -27,7 +26,6 @@
     <script src="js/bootstrap.min.js"></script>
 
 
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -37,9 +35,10 @@
     <![endif]-->
 
 
-
     <!-- Controler -->
     <script src="js/control.js"></script>
+    <script src="js/util.js"></script>
+
 </head>
 
 <body>
@@ -70,7 +69,7 @@
                 <li>
                     <a href="#">Search Statistics</a>
                 </li>
-                  <li>
+                <li>
                     <a href="#">Symptom Model Training</a>
                 </li>
                 <li>
@@ -99,7 +98,8 @@
             <textarea class="form-control" rows="7" id="text_search_input"></textarea>
         </div>
         <label class="control-label">Select File</label>
-        <input id="input_file_upload" name="input2[]" type="file" class="btn btn-default btn-file" multiple data-show-upload="false" data-show-caption="true">
+        <input id="input_file_upload" name="input2[]" type="file" class="btn btn-default btn-file" multiple
+               data-show-upload="false" data-show-caption="true">
 
 
         <p>
@@ -111,11 +111,11 @@
     <div class="row">
 
         <!-- Blog Entries Column -->
-        <div id="div_top_hit" class="col-md-8" >
-       </div>
+        <div id="div_top_hit" class="col-md-8">
+        </div>
 
         <div id="div_search_result" class="col-md-8" style="display: none;">
-       </div>
+        </div>
 
         <!-- Blog Sidebar Widgets Column -->
         <div class="col-md-4">
@@ -165,98 +165,26 @@
                     </div>
                 </div>
             </div>
-<!--
-            <div class="well">
-                <h4>Side Widget Well</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus
-                    laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
-            </div>
--->
+
 
         </div>
 
     </div>
 
 
-<!--
     <div class="row">
-        <div class="col-lg-12">
-            <h3>Latest Features</h3>
-        </div>
-    </div>
-    <div class="row text-center">
+        <hr>
 
-        <div class="col-md-3 col-sm-6 hero-feature">
-            <div class="thumbnail">
-                <img src="http://placehold.it/800x500" alt="">
-                <div class="caption">
-                    <h3>Feature Label</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                    <p>
-                        <a href="#" class="btn btn-primary">Buy Now!</a> <a href="#" class="btn btn-default">More
-                        Info</a>
-                    </p>
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; VMware 2016</p>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 hero-feature">
-            <div class="thumbnail">
-                <img src="http://placehold.it/800x500" alt="">
-                <div class="caption">
-                    <h3>Feature Label</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                    <p>
-                        <a href="#" class="btn btn-primary">Buy Now!</a> <a href="#" class="btn btn-default">More
-                        Info</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 hero-feature">
-            <div class="thumbnail">
-                <img src="http://placehold.it/800x500" alt="">
-                <div class="caption">
-                    <h3>Feature Label</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                    <p>
-                        <a href="#" class="btn btn-primary">Buy Now!</a> <a href="#" class="btn btn-default">More
-                        Info</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 col-sm-6 hero-feature">
-            <div class="thumbnail">
-                <img src="http://placehold.it/800x500" alt="">
-                <div class="caption">
-                    <h3>Feature Label</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                    <p>
-                        <a href="#" class="btn btn-primary">Buy Now!</a> <a href="#" class="btn btn-default">More
-                        Info</a>
-                    </p>
-                </div>
-            </div>
-        </div>
+        </footer>
 
     </div>
-
--->
-    <div class="row">
-    <hr>
-
-    <!-- Footer -->
-    <footer>
-        <div class="row">
-            <div class="col-lg-12">
-                <p>Copyright &copy; VMware 2016</p>
-            </div>
-        </div>
-    </footer>
-
 </div>
 
 

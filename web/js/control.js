@@ -28,8 +28,8 @@ function makesearch() {
     $('#div_top_hit').hide();
 
     $('#div_search_result').show();
-
-    if($('#input_file_upload').get(0).files[0] == "") {
+    console.log($('#input_file_upload').get(0).files)
+    if($('#input_file_upload').get(0).files.length ==0) {
         textsearch();
     } else {
         filesearch();
@@ -68,14 +68,22 @@ function textsearch() {
                 //show in div div_search_result
                 for (var i = 0; i < res.length; i++) {
                     var result = res[i];
+                    var title = safe_tags_replace(result["title"]);
+                    //var text = safe_tags_replace(result["text"])
+                    var text = (result["text"]);
 
-                    kbhtml = '<div><h4><a href="' + result["url"] + '">' + result["title"] + '</a></h4><p>' + result["text"] + '</p> <p>Similarity:' +
-                        '<a href="#"> <span class="glyphicon glyphicon-star"></span> </a>' +
-                        '<a href="#"><span class="glyphicon glyphicon-star"></span> </a>' +
-                        '<a href="#"><span class="glyphicon glyphicon-star"></span></a>' +
-                        '<a href="#"><span class="glyphicon glyphicon-star"></span></a>' +
-                        '<a href="#"><span class="glyphicon glyphicon-star"></span> </a>' +
-                        '</p> <p><a class="btn btn-primary" href="#">Comments <span class="glyphicon glyphicon-chevron-right"></span></a></p><hr></div>'
+                    kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> <p><b></b>Similarity:</b>'
+                    var j = 0
+                    for( ; j < result['rank']; j ++) {
+                        kbhtml = kbhtml + '<a href="#"> <span class="glyphicon glyphicon-star"></span> </a>'
+                    }
+
+                    for(; j < 5; j ++) {
+                        kbhtml = kbhtml + '<a href="#"><span class="glyphicon glyphicon-star-empty"></span> </a>'
+                    }
+
+                    //kbhtml = kbhtml + '</p> <p><a class="btn btn-primary" href="#">Comments <span class="glyphicon glyphicon-chevron-right"></span></a></p><hr></div>'
+                    //kbhtml = kbhtml + '</p> <hr></div>'
 
 
                     $("#div_search_result").append(kbhtml);
@@ -160,10 +168,12 @@ function filesearch() {
     var query = $('#text_search_input').val();
 
     var url = "http://unified.eng.vmware.com:8000/file";
+    for(var i = 0; i < $('#input_file_upload').get(0).files.length; i ++) {
+        var file = $('#input_file_upload').get(0).files[i];
+        var formData = new FormData();
+        formData.append('file', file);
+    }
 
-    var file = $('#input_file_upload').get(0).files[0];
-    var formData = new FormData();
-    formData.append('file', file);
     formData.append('text', query);
 
     $.ajax({
