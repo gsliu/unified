@@ -191,16 +191,16 @@ class SymptomDetail(Resource):
         s = Symptom(kbnumber)
         page = IKBPage('/data/data/kbraw/data/' + kbnumber)
 
-        hits = ""
-        for h in sh.getGroupHits(int(kbnumber)):
-            hits = hits + str(h)
+#        hits = ""
+#        for h in sh.getGroupHits(int(kbnumber)):
+#            hits = hits + str(h)
 
         ret = {
                   'url': 'http://kb.vmware.com/kb/' + kbnumber,
                   'title': page.get_title(),
                   'text': page.get_text()[0:300],
                   'log':s.getLogs(),
-                  'hits': hits,
+                  'hits': str(sh.getGroupHits(int(kbnumber))),
                }
         #ret = json_encode(ret)
         print ret
@@ -256,7 +256,7 @@ class Service:
  
 
     def start(self):
-        self.app.run(host='0.0.0.0', port=7000,debug=True)
+        self.app.run(host='0.0.0.0', port=8000,debug=True)
         #self.app.run(host='0.0.0.0', port=8000)
 
 
