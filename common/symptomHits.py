@@ -73,6 +73,7 @@ class SymptomHits:
         for d in data:
             h = {'time':d[0], 'hits':d[1]}
             ret.append(h)
+        print ret
         return ret
         
  
@@ -85,13 +86,13 @@ class SymptomHits:
 
 if __name__ == "__main__":
     s = SymptomHits()
-    s.hit(1009484)
-    s.hit(1031636)
-    s.hit(1005266)   
-    print s.topHits()
+    #s.hit(1009484)
+    #s.hit(1031636)
+    #s.hit(1005266)   
+    #print s.topHits()
 
-    print s.topHitsFull()
-    print json.dumps(s.topHitsFull())
+    #print s.topHitsFull()
+    #print json.dumps(s.topHitsFull())
     
-    print s.getGroupHits(1031636)
+    print s.getGroupHits(2120653)
         
