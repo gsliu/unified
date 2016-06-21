@@ -1,6 +1,6 @@
 import sys
-from flask import Flask
-from flask import jsonify
+from flask import Flask, make_response
+from flask import jsonify, Response
 from flask_restful import request, reqparse, abort, Api, Resource
 import os
 import json
@@ -185,12 +185,17 @@ class SymptomDetail(Resource):
         print kbnumber
         s = Symptom(kbnumber)
         page = IKBPage('/data/data/kbraw/data/' + kbnumber)
+
+        hits = ""
+        for h in sh.getGroupHits(int(kbnumber)):
+            hits = hits + str(h)
+
         ret = {
                   'url': 'http://kb.vmware.com/kb/' + kbnumber,
                   'title': page.get_title(),
                   'text': page.get_text()[0:300],
                   'log':s.getLogs(),
-                  'hits': str(sh.getGroupHits(int(kbnumber))),
+                  'hits': hits,
                }
         #ret = json_encode(ret)
         print ret
@@ -201,14 +206,16 @@ class LogDetails(Resource):
     def get(self, kbnumber):
         print kbnumber
         s = Symptom(kbnumber)
-        ret = "name,count\n"
+        ret = 'name,count'
         for log in s.getLogs():
             ret = ret + log['log'] + ',' + str(int(log['score']*10 + 1) ) + '\n'
-       
-        #ret = json_encode(ret)
+             
         print ret
-        return ret, 200, {'Access-Control-Allow-Origin': '*'}
-
+        r = make_response(ret)
+        r.headers['Content-Type'] = 'text/plain'
+        r.headers['Access-Control-Allow-Origin'] = '*'
+        print r
+        return r
         #return json.dumps(ret,  cls=ComplexEncoder), 200, {'Access-Control-Allow-Origin': '*'}
 
  
@@ -244,7 +251,7 @@ class Service:
  
 
     def start(self):
-        self.app.run(host='0.0.0.0', port=8000,debug=True)
+        self.app.run(host='0.0.0.0', port=7000,debug=True)
         #self.app.run(host='0.0.0.0', port=8000)
 
 

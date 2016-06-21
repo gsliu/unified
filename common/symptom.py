@@ -57,6 +57,18 @@ class Symptom:
     def getLogs(self):
         return self.logs
 
+    def getLogsDemo(self):
+        ret = 'name,count\n'
+        for log in s.getLogs():
+            l = re.sub('[^a-zA-Z ]', "", log['log'])
+            l = l.replace(',', '')
+            l = l.strip()
+         
+            ret = ret + l + ',' + str(int(log['score']*10 + 1) ) + '\n'
+
+        return ret
+
+
     def deleteLog(self, log):
    
         sql = 'delete from log_symptom where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
@@ -83,11 +95,11 @@ class Symptom:
 
 
 if __name__ == "__main__":
-    s = Symptom(1009484)
-    log1 = {'log':'test log', 'score':float(0.123)}
-    s.addLog(log1)
-    print s.getLogs()
-    log2 = {'log':'test log2', 'score':float(1.523)}
-    s.addLog(log2)
-    print s.getLogs()
+    s = Symptom(2045116 )
+    #log1 = {'log':'test log', 'score':float(0.123)}
+    #s.addLog(log1)
+    #print s.getLogs()
+    #log2 = {'log':'test log2', 'score':float(1.523)}
+    #s.addLog(log2)
+    print s.getLogsDemo()
         
