@@ -72,12 +72,20 @@ function textsearch() {
             res = JSON.parse(res);
             console.log(res);
             if(res.length > 0) {
+
+
                 //show the total result number
                 $("#div_search_result").append('<h3 class="page-header"> About ' + res.length + ' results  <small>' + td + 'seconds</small> </h3>');
 
                 //show in div div_search_result
                 for (var i = 0; i < res.length; i++) {
                     var result = res[i];
+
+                    ss = result["url"].split('/');
+                    kbnumber = ss[ss.length - 1];
+                    console.log(kbnumber);
+
+
                     var title = safe_tags_replace(result["title"]);
                     //var text = safe_tags_replace(result["text"])
                     var text = (result["text"]);
@@ -91,9 +99,10 @@ function textsearch() {
                     for(; j < 5; j ++) {
                         kbhtml = kbhtml + '<a href="#"><span class="glyphicon glyphicon-star-empty"></span> </a>'
                     }
+                    kbhtml = kbhtml + '<a style="float:right" href="/symptom.html?id=' + kbnumber +'">Symptom Details</a>'
 
                     //kbhtml = kbhtml + '</p> <p><a class="btn btn-primary" href="#">Comments <span class="glyphicon glyphicon-chevron-right"></span></a></p><hr></div>'
-                    //kbhtml = kbhtml + '</p> <hr></div>'
+                    kbhtml = kbhtml + '</p> <hr></div>'
 
 
                     $("#div_search_result").append(kbhtml);
@@ -144,7 +153,7 @@ function listtophits() {
 
             //display the result
             $("#div_top_hit").empty();
-            $("#div_top_hit").append('<h3 class="page-header">Top Hit Knowledgebases</h3>')
+            $("#div_top_hit").append('<h3 class="page-header">Top Hit Knowledge Bases</h3>')
 
             res = JSON.parse(res);
             console.log(res);
@@ -155,9 +164,12 @@ function listtophits() {
                 //show in div div_search_result
                 for (var i = 0; i < res.length; i++) {
                     var result = res[i];
+                    ss = result["url"].split('/');
+                    kbnumber = ss[ss.length - 1];
+                    console.log(kbnumber);
 
                     kbhtml = '<div><h4><a href="' + result["url"] + '">' + result["title"] + '</a></h4><p>' + result["text"] +
-                        '</p> <b>' + res[i]['hits']+ '</b> this week </p> ' +
+                        '</p> <b>' + res[i]['hits']+ '</b> in total <a style="float:right" href="/symptom.html?id=' + kbnumber +'">Symptom Details</a></p> ' +
                         ' <hr></div>'
 
                     $("#div_top_hit").append(kbhtml);
@@ -216,9 +228,15 @@ function filesearch() {
                 //show the total result number
                 $("#div_search_result").append('<h3 class="page-header"> About ' + res.length + ' results  <small>' + td + 'seconds</small> </h3>');
 
+
                 //show in div div_search_result
                 for (var i = 0; i < res.length; i++) {
                     var result = res[i];
+
+                    ss = result["url"].split('/');
+                    kbnumber = ss[ss.length - 1];
+                    console.log(kbnumber);
+
                     var title = safe_tags_replace(result["title"]);
                     //var text = safe_tags_replace(result["text"])
                     var text = (result["text"]);
@@ -232,9 +250,9 @@ function filesearch() {
                     for(; j < 5; j ++) {
                         kbhtml = kbhtml + '<a href="#"><span class="glyphicon glyphicon-star-empty"></span> </a>'
                     }
-
+                    kbhtml = kbhtml + '<a style="float:right" href="/symptom.html?id=' + kbnumber +'">Symptom Details</a>'
                     //kbhtml = kbhtml + '</p> <p><a class="btn btn-primary" href="#">Comments <span class="glyphicon glyphicon-chevron-right"></span></a></p><hr></div>'
-                    //kbhtml = kbhtml + '</p> <hr></div>'
+                    kbhtml = kbhtml + '</p> <hr></div>'
 
 
                     $("#div_search_result").append(kbhtml);

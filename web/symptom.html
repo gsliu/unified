@@ -15,7 +15,10 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
+    <!-- CSS concatenated and minified via ant build script-->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <!-- Custom CSS -->
     <link href="css/heroic-features.css" rel="stylesheet">
     <!-- jQuery -->
@@ -26,7 +29,7 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="js/libs/bootstrap.min.js"></script>
 
-
+    <script src="js/libs/modernizr-2.0.6.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -103,35 +106,41 @@
 
     <div class="row">
 
-
         <div id="div_kb_info" class="col-md-12">
-            <div><h4><a href="http://kb.vmware.com/kb/2120653">VMware KB: Removing a VMware vSphere Distributed Switch
-                from VMware vCenter Server fails with the error: The resource 'c-port_id' is in use </a></h4>
-                <p>When you attempt to remove a VMware vSphere Distributed Switch, you experience these symptoms:
-
-
-                    You see the error:The resource 'c-port_id' is in use.vDS ip_address_vDS port port_id&nbsp;is used by
-                    entity
-                    <not-found.> Virtual NIC vmkx, type:hostVmkVnic
-                        The vpxd.log file contains entries similar to:No...
-                    </not-found.>
-                </p>
-
-
-                <b>16 hits</b> totally <p></p>
-
-                <hr>
-            </div>
-
 
         </div>
 
-
     </div>
 
+
+
+    <div id="container" class="container">
+        <header>
+
+            <h2 id="book-title"></h2>
+        </header>
+        <div id="main" role="main">
+            <div id="vis"></div>
+            <div style="display: none" id="status"></div>
+            <div style="display: none" id="controls">
+                <h3>Jitter</h3>
+                <form id="jitter" oninput="output.value = (jitter_input.value / 200).toFixed(3)" >
+                    <input id="jitter_input" type="range" min="0" max="400" value="100" style="width:240px;">
+                    <output name="output" for="input">0.5</output>
+                </form>
+            </div>
+        </div>
+
+    </div>
+   <hr>
     <div class="row">
+        <header>
+
+            <h2 id="book-title">Symptom Hits History Statistics</h2>
+        </header>
         <div id="divHitsChart" style="height: 300px; margin: 0 auto"></div>
     </div>
+    <!--! end of #container -->
 
     <div class="row">
         <hr>
@@ -149,101 +158,15 @@
 </div>
 
 
-    <script type="text/javascript">
-      var oPerfChart;
-      function refreshChart() {
-          //异步请求数据
-          $.ajax({
-              type: "GET",
-              url: 'http://unified.eng.vmware.com:8000/symptom',// hard code kb number for debugging
-              data: {kbnumber: 2120653},
-              success: function (data) {
-                  //定义一个数组
-                  var series_data = [];
-                  var res = JSON.parse(data);
-                  var hits = eval(res['hits']);
-                  var mydate;
-
-                  //迭代，把异步获取的数据放到数组中
-                  $.each(hits, function (i, elem) {
 
 
-                      series_data.push([Date.parse(elem['time']), parseInt(elem['hits'])]);
-                      console.log("aaaa");
-                  });
-                  //设置数据
-                  oPerfChart.series[0].setData(series_data);
+<script>window.jQuery || document.write('<script src="js/libs/jquery.js"><\/script>')</script>
 
 
-              },
-              error: function (e) {
-                  console.log("Cannot get symptom data, check database\n");
-              }
-
-          });
-
-      }
-
-
-
-
-
-
-        $(function () {
-             oPerfChart = new Highcharts.Chart({
-                chart: {
-                    type: 'column',
-                    renderTo: 'divHitsChart'
-
-                },
-                title: {
-                    text: 'Symptom hits history'
-                },
-                subtitle: {
-                    text: 'hits data for each symptom'
-                },
-                xAxis: {
-                    type: 'datetime',
-
-                    formatter: function () {
-                        return Highcharts.dateFormat('%a %d %b', this.value);
-                    },
-                    title: {
-                        text: 'Date'
-                    }
-                },
-                yAxis: {
-                    title: {
-                        text: 'Hits'
-                    },
-                    min: 0
-                },
-
-
-                plotOptions: {
-                    spline: {
-                        marker: {
-                            enabled: true
-                        }
-                    }
-                },
-
-                series: [{
-                    name: 'Hits/Day',
-                    yAxis: 0
-
-
-                }]
-            });
-
-
-        });
-
-    refreshChart()
-
-
-
-    </script>
+<script defer src="js/libs/plugins.js"></script>
+<script src="js/libs/d3.min.js"></script>
+<script src="js/symptom.js"></script>
+<script src="js/d3control.js"></script>
 
 
 

@@ -267,8 +267,7 @@ function loadsymptom(kbnumber) {
 
 $(function() {
 
-    logs = loadsymptom(2120653);
-    console.log("hahah");
+    kbnumber = getUrlParameter('id')
 
     var display, key, plot, text;
     plot = Bubbles();
@@ -291,11 +290,11 @@ $(function() {
         location.replace("#");
         return location.search = encodeURIComponent(key);
     });
-     d3.select("#book-title").html('2120653')
+     d3.select("#book-title").html('Symptom Data Model Details')
 
     console.trace();
     //return d3.csv("data/" + text.file, display);
-    return d3.csv("http://unified.eng.vmware.com:7000/logs/2045116", display);
+    return d3.csv("http://unified.eng.vmware.com:8000/logs/" + kbnumber, display);
 
     
 });
