@@ -64,10 +64,10 @@ def textmatched(r, page):
                except:
                    pass
 
-           if len(text) > 200:
+           if len(text) > 300:
                break
-           if text < 100:
-              text = kbtext[0:100]
+           if len(text) < 300:
+              text = kbtext[0:300] + text
            
            
     text = text + '...'
@@ -86,9 +86,33 @@ def rank(ret):
     return ret
     
 
-def star(scores):
-    rank = []
-    for s in scores:
-        rank.append(5)
-    return rank
+def star(listofscore):
+    star = []
+    lessthan_ave = []
+    ave_number = sum(listofscore)/len(listofscore)
+    max_number = max(listofscore)
+    min_number = min(listofscore)
+    for i in range(len(listofscore)):
+        if (listofscore[i] <= ave_number):
+            lessthan_ave.append(listofscore[i])
+    max_less_ave = max(lessthan_ave)
+    for i in range(len(listofscore)):
+        if (listofscore[i] > ave_number):
+            if(listofscore[i] == max_number):
+                star.append(5)
+            else:
+                hdelta = listofscore[i] - ave_number
+                star_hscore = 3-hdelta%3 + 2
+                star.append(round(star_hscore))
+        else:
+            if(listofscore[i] == max_less_ave):
+                star.append(3)
+            elif(listofscore[i] == min_number):
+                star.append(1)
+            else:
+                ldelta = ave_number - listofscore[i]
+                star_lscore = 3 - ldelta%3
+                star_int = round(star_lscore)
+                star.append(star_int)
+    return star
      

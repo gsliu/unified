@@ -111,7 +111,7 @@ class IKB_to_ES_Loader:
             if isfile(file):
                 kb = IKBPage(file)
                 tags = kb.get_tags()
-                if 'Chinese' in tags or 'Japanese' in tags or 'Spanish' in tags or 'Portugues' in tags:
+                if 'Mandarin' in tags  or 'Chinese' in tags or 'Japanese' in tags or 'Spanish' in tags or 'Portugues' in tags:
                     print 'ignore other langurage kb %s' % kb.get_id()
                     continue
                 self.index_item(IKBPage(file))

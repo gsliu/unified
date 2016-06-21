@@ -22,10 +22,10 @@ class esxiLogExtractor(logExtractor):
         if "tgz" in split_filename:
             fn = filename.decode('unicode-escape')
             print fn
-            tar = tarfile.open(fn, "r:gz")
+            tar = tarfile.open(fn, "r")
             extracted = tar.next().name.split("/")[0]
             print "umask 000;tar zxvf " + filename + ' -C ' + self.file 
-            os.system("umask 000;tar zxvf " + filename + ' -C ' + self.file)
+            os.system("umask 000;tar xvf " + filename + ' -C ' + self.file)
             ret = self.file + extracted
             print "ret = %s" % ret
             os.system("cd " + ret  + '/' + '; ./reconstruct.sh')

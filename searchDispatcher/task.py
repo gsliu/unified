@@ -6,6 +6,7 @@ import mysql.connector
 import sys
 sys.path.append('..')
 from common.indexLogs import IndexLogs
+from logExtractor import esxiLogExtractor
  
  
  
@@ -48,8 +49,17 @@ def createTask():
 def runTask(id):
     dirname = '/data/data/bundle/task%d' % id
     indexname = 'task%d' %id
-    il = IndexLogs(dirname, indexname)
+    #extract log
+    
+    print 'Extracting....%d' % id 
+    esx = esxiLogExtractor('/data/data/bundle/task%d/' % id)
+    ret = esx.extractAllFiles()
+
     print 'indexing task... %d' % id
+    il = IndexLogs(dirname, indexname)
+    
+    print 'finished task... %d' %id
+    updateTask(id, 1)
 
 def startTask(id):
     thread.start_new_thread ( runTask, (id,) )
@@ -59,8 +69,8 @@ def startTask(id):
 if __name__ == '__main__':
     #startTask(id)
     #id = createTask()
-    startTask(1066)
+    startTask(1068)
     
     while 1:
-        print 'done'
+    #    print 'done'
         pass 

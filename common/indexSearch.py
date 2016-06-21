@@ -18,7 +18,7 @@ class IndexSearch(object):
         res = self.es.search(index=indexname, q='"' + log + '"')  # add "" for log 
 
         if 'hits' in res:
-            print 'There is matched result. ' + log
+            #print 'There is matched result. ' + log
             return True
         
         return False

@@ -4,6 +4,8 @@ from flask import jsonify
 from flask_restful import request, reqparse, abort, Api, Resource
 import os
 import json
+from json import encoder
+import decimal
 sys.path.append('..')
 from common.textMatcher import TextMatcher
 from common.indexMatcher import IndexMatcher
@@ -13,6 +15,12 @@ from common.symptomHits import SymptomHits
 from task import createTask, startTask
 from dataScripts.kb.webpage import IKBPage
 
+class ComplexEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, complex):
+            return [obj.real, obj.imag]
+        # Let the base class default method raise the TypeError
+        return json.JSONEncoder.default(self, obj)
 
 
 #init matcher....this may take long time.
@@ -100,9 +108,20 @@ class FileDispatcher(Resource):
 #fieldname:task
 
 class TaskDispatcher(Resource):
-    def get(self):
-        return 'This is text get'
  
+    def get(self):
+        id = request.args.get('id')
+        status = queryTask(id)
+        if status == 0:
+            return 'Not done yet', 200, {'Access-Control-Allow-Origin': '*'}
+        else:
+            ret = indexMatcher.match('task%d', id)
+            return json.dumps(ret), 200, {'Access-Control-Allow-Origin': '*'} 
+            
+               
+
+
+
     def post(self):
         args = parser.parse_args()
         task = args['task']
@@ -117,7 +136,8 @@ class TaskDispatcher(Resource):
 
 class PRDispatcher(Resource):
     def get(self):
-        return "haha" 
+        return "abc" 
+
     def post(self):
         args = parser.parse_args()
         pr = args['pr']
@@ -168,14 +188,31 @@ class SymptomDetail(Resource):
         ret = {
                   'url': 'http://kb.vmware.com/kb/' + kbnumber,
                   'title': page.get_title(),
-                  'text': page.get_text(),
+                  'text': page.get_text()[0:300],
                   'log':s.getLogs(),
-                  'hits': sh.getGroupHits(int(kbnumber)),
+                  'hits': str(sh.getGroupHits(int(kbnumber))),
                }
+        #ret = json_encode(ret)
         print ret
-        return json.dumps(ret), 200, {'Access-Control-Allow-Origin': '*'}
+        return json.dumps(ret,  cls=ComplexEncoder), 200, {'Access-Control-Allow-Origin': '*'}
 
  
+class LogDetails(Resource):
+    def get(self, kbnumber):
+        print kbnumber
+        s = Symptom(kbnumber)
+        ret = "name,count\n"
+        for log in s.getLogs():
+            ret = ret + log['log'] + ',' + str(int(log['score']*10 + 1) ) + '\n'
+       
+        #ret = json_encode(ret)
+        print ret
+        return ret, 200, {'Access-Control-Allow-Origin': '*'}
+
+        #return json.dumps(ret,  cls=ComplexEncoder), 200, {'Access-Control-Allow-Origin': '*'}
+
+ 
+
 
 
 
@@ -203,6 +240,7 @@ class Service:
         #service to list top hit KB
         self.api.add_resource(TopHitKB, '/tophit')
         self.api.add_resource(SymptomDetail, '/symptom')
+        self.api.add_resource(LogDetails, '/logs/<kbnumber>')
  
 
     def start(self):

@@ -9,10 +9,11 @@ from  symptom import Symptom
 
 
 class Matcher:
-    def __init__(self, minscore=1.0, minlogscore=0.2):
-        self.symptoms = self.loadSymptoms(minscore)
+    def __init__(self, minscore=1.0 ):
+        self.symptoms = self.loadSymptoms(minscore )
+       
 
-    def loadSymptoms(self, minscore):
+    def loadSymptoms(self, minscore) :
         cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
         cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
         sql = 'SELECT kbnumber FROM `symptom` where symptomscore > %2.8f ' % minscore

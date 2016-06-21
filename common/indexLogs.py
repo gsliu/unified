@@ -48,11 +48,17 @@ class IndexLogs(object):
         #    "doubles": [1.0, 2.0, 3.0]}, indexname, "test-type", 1)
 
         for logfile in self.findLogFiles(logDir):
-            j = self.toBeJason(logfile)
-            conn.index(j, indexname, "test-type")  # Index a typed JSON document into a specific index and make it searchable.
+            if os.path.isfile(logfile):
+                j = self.toBeJason(logfile)
+                conn.index(j, indexname, "test-type")  # Index a typed JSON document into a specific index and make it searchable.
+            else:
+                print "There is not file in %s." %(logDir)
 
-        j = self.toBeJason(self.findCommentFile(logDir)) 
-        conn.index(j, indexname, "test-type")
+        if os.path.isfile(self.findCommentFile(logDir)):
+            j = self.toBeJason(self.findCommentFile(logDir)) 
+            conn.index(j, indexname, "test-type")
+        else:
+            print "There is no comment text file."
 
 
     def findLogFiles(self, logDir):
@@ -68,6 +74,7 @@ class IndexLogs(object):
 
     def findCommentFile(self, logDir):
         fileList = os.listdir(logDir)
+        commentFile = ''
 
         for line in fileList:
             if line == 'text':
@@ -87,6 +94,7 @@ class IndexLogs(object):
 
         file.close(fp)
         return encodedjson
+
 
 if __name__ == '__main__':
     inde = IndexLogs('/data/', "tast-indexname")
