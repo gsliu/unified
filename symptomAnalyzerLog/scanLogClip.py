@@ -153,12 +153,12 @@ if __name__ == '__main__':
     #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/ui')
     #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora-soft')
     #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmcore')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmkdrivers')
-    runset.append('/mnt/dbc/gengshengl/src/view623/mojo/')
+    runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/')
+    #runset.append('/mnt/dbc/gengshengl/src/view623/mojo/')
 
     sccs = []  
     for s in runset:
-        sccs.append(ScanCodeClip(s, 'logclip_view'))
+        sccs.append(ScanCodeClip(s, 'logclip'))
 
     for scc in sccs:
         print 'starting new ....'

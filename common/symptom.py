@@ -79,6 +79,31 @@ class Symptom:
             ret = ret + lc + ',' + str(log['score'] *100) + '\n'
 
         return ret
+    def hasLog(self,log):
+        for l in self.logs:
+            if log['log'] == l['log']:
+                return True
+        return False
+
+    def updateIncreaseLog(self, log):
+        for l in self.logs:
+            if l['log'] == log['log']:
+                l['score'] = l['score'] + log['score']
+                self.updateLog(l)
+
+    def updateDecreaseLog(self, log):
+        for l in self.logs:
+            if l['log'] == log['log']:
+                l['score'] = l['score'] - log['score']
+                self.updateLog(l)
+
+    def updateLog(self, log):
+        sql = 'UPDATE `log_symptom` SET `score`= %2.8f WHERE kbnumber = "%s" and log = "%s"' % ( log['score'], self.kbnumber, log['log'])
+        cursor.execute(sql)
+        cnx.commit()
+        self.save()
+        
+        
 
 
     def deleteLog(self, log):
@@ -108,10 +133,17 @@ class Symptom:
 
 if __name__ == "__main__":
     s = Symptom(2045116 )
+
     #log1 = {'log':'test log', 'score':float(0.123)}
     #s.addLog(log1)
     #print s.getLogs()
     #log2 = {'log':'test log2', 'score':float(1.523)}
     #s.addLog(log2)
-    print s.getLogsDemo()
+    print s.getLogs()
         
+    log = {}
+    log['log'] = 'ToolsBackup: '
+    log['score'] = 0.3
+    print s.hasLog(log)
+    s.updateIncreaseLog(log)
+    print s.getLogs()
