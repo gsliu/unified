@@ -58,7 +58,10 @@ class Builder():
                 for kbnumber in result:
                     print("   updating sym %d") % kbnumber
                     sym = Symptom(kbnumber)
-                    sym.addLog(log)
+                    if sym.hasLog(log):
+                        sym.updateIncreaseLog(log)
+                    else:
+                        sym.addLog(log)
 
 if __name__ == '__main__':
     builder = Builder()

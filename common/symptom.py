@@ -30,7 +30,7 @@ class Symptom:
             self.symptomscore = 0
     
     def loadLog(self):
-        sql = 'SELECT * FROM `log_symptom` where kbnumber = ' +  str(self.kbnumber)
+        sql = 'SELECT * FROM `log_symptom2` where kbnumber = ' +  str(self.kbnumber)
         cursor.execute(sql)
         self.data = cursor.fetchall()
         for row in self.data:
@@ -42,7 +42,7 @@ class Symptom:
         self.logcount = self.logcount + 1
         self.symptomscore = self.symptomscore + log['score']  
         #print log
-        sql = 'INSERT INTO `log_symptom`(`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
+        sql = 'INSERT INTO `log_symptom2`(`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
         print sql
         cursor.execute(sql)
         cnx.commit()
@@ -103,7 +103,7 @@ class Symptom:
                 self.updateLog(l)
 
     def updateLog(self, log):
-        sql = 'UPDATE `log_symptom` SET `score`= %2.8f WHERE kbnumber = "%s" and log = "%s"' % ( log['score'], self.kbnumber, log['log'])
+        sql = 'UPDATE `log_symptom2` SET `score`= %2.8f WHERE kbnumber = "%s" and log = "%s"' % ( log['score'], self.kbnumber, log['log'])
         cursor.execute(sql)
         cnx.commit()
         self.save()
@@ -113,7 +113,7 @@ class Symptom:
 
     def deleteLog(self, log):
    
-        sql = 'delete from log_symptom where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
+        sql = 'delete from log_symptom2 where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
         cursor.execute(sql)
         cnx.commit()
         self.save()

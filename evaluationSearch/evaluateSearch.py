@@ -118,6 +118,11 @@ class EvaluateSearch:
     #def matchPR(self,fullText):
     #    return textMatcher.match(text)
 
+    def testMatch(self, bug):
+        text = self.getFullText(bug)
+        print text
+        ret = textMatcher.match(text)
+
     def process(self):
         pr_kb_sql = 'select min(bug_id), kb_id from bug_kb_map group by kb_id'
         self.bz_cur.execute(pr_kb_sql)
@@ -171,4 +176,5 @@ if __name__ == "__main__":
     #print loader.create_item(1291688)
     #print loader.create_item(1335744)
     #print loader.create_item(1339158)
-    ev.process()
+    #ev.process()
+    ev.testMatch(1386722)
