@@ -92,6 +92,9 @@ class FileDispatcher(Resource):
                 file.save(os.path.join('/data/data/bundle/task%d' % id, f_name))
             if text:
                 t_file = open(os.path.join('/data/data/bundle/task%d' % id, 'text'), 'w')
+                text = text.encode('utf8', 'replace')
+                #text = unicode(text).replace("\r", " ").replace("\n", " ").replace("\t", '').replace("\"", "")
+
                 t_file.write(text)
                 t_file.close()
             #extract the bundle

@@ -91,8 +91,8 @@ if __name__ == "__main__":
     #s.hit(1005266)   
     #print s.topHits()
 
-    #print s.topHitsFull()
+    print s.topHitsFull()
     #print json.dumps(s.topHitsFull())
     
-    print s.getGroupHits(2120653)
+    #print s.getGroupHits(2120653)
         
