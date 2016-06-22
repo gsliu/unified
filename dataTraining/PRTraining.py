@@ -1,21 +1,49 @@
 import sys
 import re
-from esSearchLogClip import ESSearchLogClip 
-from mysqlLogClip import MysqlLogClip 
-sys.path.append("...")
+import mysql
+import MySQLdb
+from esSearchBZLogClip import ESSearchBZLogClip 
+sys.path.append("..")
 print sys.path
 
+from dataScripts.bz.db_bz import get_bz_con
+
 from common.symptom import Symptom 
+from symptomAnalyzerLog.mysqlLogClip import MysqlLogClip 
 
 reload(sys);
 sys.setdefaultencoding("utf8")
 
 
 
-class Builder():
+class PRTraining():
     def __init__(self):
-        self.es = ESSearchLogClip()
+        self.es = ESSearchBZLogClip()
         self.logdbs = []
+        self.bz_con, self.bz_cur = get_bz_con()
+
+   
+        pr_kb_sql = 'select bug_id, kb_id from bug_kb_map'
+        self.bz_cur.execute(pr_kb_sql)
+        data = self.bz_cur.fetchall()
+        self.pr_kb = {}
+        for d in data:
+            print d
+            if not self.pr_kb.has_key(str(d[0])):
+                self.pr_kb[str(d[0])] = []
+            self.pr_kb[str(d[0])].append(d[1])
+
+
+
+        self.sdict = {}
+        sqlkb = 'select kbnumber from symptom'
+        cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
+        cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(sqlkb)
+        data = cursor.fetchall()
+        for d in data:
+            self.sdict[str(d[0])] = 1
+
 
     def addLogTable(self, table):
         self.logdbs.append(MysqlLogClip(table))
@@ -28,17 +56,23 @@ class Builder():
               
             #update score of lop clip
             if total > 0:
-                log['score'] = 1.0 / total
+                log['score'] = 0.3 / total
             else:
                 log['score'] = 0.0
-            logdb.updateScore(log)
+            #logdb.updateScore(log)
 
-            #20 hits mean this log clip is too common
-            if total > 20:
-                return kbs
+            #10 hits mean this log clip is too common
+            if total > 10:
+                return kbs 
  
             for hit in esraw['hits']['hits']:
-                kbs.append(int(hit['_id']))
+               
+                if self.pr_kb.has_key(str(hit['_id'])):
+                    for kb in self.pr_kb[str(hit['_id'])]:
+                        if self.sdict.has_key(kb):
+                            kbs.append(kb)
+                            print 'found kb %s, bug %s' % (kb, str(hit['_id']))
+                    
         return kbs
 
      
@@ -50,17 +84,22 @@ class Builder():
                 esraw = self.es.search(log['log'])
             
                 count = count + 1
-                #print("Log %d =======>%s") % (count, log['log'])
                 print("%s: %d =======>%s") % (logdb.getTable(), count, log['log'])
             
                 result = self.parseResult(esraw, log, logdb)
 
                 for kbnumber in result:
-                    print("   updating sym %d") % kbnumber
-                    sym = Symptom(kbnumber)
-                    sym.addLog(log)
-
+                    print("   updating sym %s") % kbnumber
+                    sym = Symptom(int(kbnumber))
+                    if not sym.hasLog(log):
+                        sym.addLog(log)
+                        print "insert log"
+                    else:
+                        print "updateing log"
+                        sym.updateIncreaseLog(log)
+#
 if __name__ == '__main__':
-    builder = Builder()
-    builder.addLogTable('logclip_view')
+    builder = PRTraining()
+    #builder.addLogTable('logclip_view')
+    builder.addLogTable('logclip')
     builder.process()

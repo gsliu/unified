@@ -30,7 +30,7 @@ class Symptom:
             self.symptomscore = 0
     
     def loadLog(self):
-        sql = 'SELECT * FROM `log_symptom` where kbnumber = ' +  str(self.kbnumber)
+        sql = 'SELECT * FROM `log_symptom2` where kbnumber = ' +  str(self.kbnumber)
         cursor.execute(sql)
         self.data = cursor.fetchall()
         for row in self.data:
@@ -42,7 +42,7 @@ class Symptom:
         self.logcount = self.logcount + 1
         self.symptomscore = self.symptomscore + log['score']  
         #print log
-        sql = 'INSERT INTO `log_symptom`(`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
+        sql = 'INSERT INTO `log_symptom2`(`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
         print sql
         cursor.execute(sql)
         cnx.commit()
@@ -84,11 +84,36 @@ class Symptom:
             ret = ret + lc + ',' + str(log['score'] *100) + '\n'
 
         return ret
+    def hasLog(self,log):
+        for l in self.logs:
+            if log['log'] == l['log']:
+                return True
+        return False
+
+    def updateIncreaseLog(self, log):
+        for l in self.logs:
+            if l['log'] == log['log']:
+                l['score'] = l['score'] + log['score']
+                self.updateLog(l)
+
+    def updateDecreaseLog(self, log):
+        for l in self.logs:
+            if l['log'] == log['log']:
+                l['score'] = l['score'] - log['score']
+                self.updateLog(l)
+
+    def updateLog(self, log):
+        sql = 'UPDATE `log_symptom2` SET `score`= %2.8f WHERE kbnumber = "%s" and log = "%s"' % ( log['score'], self.kbnumber, log['log'])
+        cursor.execute(sql)
+        cnx.commit()
+        self.save()
+        
+        
 
 
     def deleteLog(self, log):
    
-        sql = 'delete from log_symptom where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
+        sql = 'delete from log_symptom2 where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
         cursor.execute(sql)
         cnx.commit()
         self.save()
@@ -113,10 +138,17 @@ class Symptom:
 
 if __name__ == "__main__":
     s = Symptom(2045116 )
+
     #log1 = {'log':'test log', 'score':float(0.123)}
     #s.addLog(log1)
     #print s.getLogs()
     #log2 = {'log':'test log2', 'score':float(1.523)}
     #s.addLog(log2)
-    print s.getLogsDemo()
+    print s.getLogs()
         
+    log = {}
+    log['log'] = 'ToolsBackup: '
+    log['score'] = 0.3
+    print s.hasLog(log)
+    s.updateIncreaseLog(log)
+    print s.getLogs()
