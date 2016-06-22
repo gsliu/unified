@@ -1,0 +1,64 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+  <head>
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Custom CSS -->
+    <link href="css/unified.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+      <title>Unified Search Plugin</title>
+
+    <style>
+      body {
+        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+        font-size: 100%;
+        overflow-x:hidden;
+        overflow-y:auto;
+      }
+      #status {
+        /* avoid an excessively wide status text */
+        white-space: pre;
+        text-overflow: ellipsis;
+
+      }
+    </style>
+
+    <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+     -->
+    <!--<script src="popup.js"></script>-->
+  </head>
+  <body style="height:500px;width:400px" scrolling="auto" >
+      <div class="container">     
+      <hr>
+       <div id="div_btn" class="col-md-10">
+            <button   id="btn_analyze"  style="float: middle;" class="btn btn-success btn-primary btn-large">Analyze!  </button>
+        </div>
+       </div>
+       <div id="div_search_result" class="col-md-10" style="display: none;">
+        </div>
+  </body>
+  <!-- Controler -->
+    <script src="js/control.js"></script>
+    <script src="js/util.js"></script>
+
+
+</html>
+
