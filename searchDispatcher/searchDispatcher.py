@@ -198,8 +198,9 @@ class SymptomDetail(Resource):
         ret = {
                   'url': 'http://kb.vmware.com/kb/' + kbnumber,
                   'title': page.get_title(),
-                  'text': page.get_text()[0:300],
+                  'text': page.get_text()[0:500] + '...',
                   'log':s.getLogs(),
+                  'total':str(sh.getHits(int(kbnumber))),
                   'hits': str(sh.getGroupHits(int(kbnumber))),
                }
         #ret = json_encode(ret)

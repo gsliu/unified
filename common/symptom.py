@@ -59,13 +59,18 @@ class Symptom:
 
     def getLogsDemo(self):
         ret = 'name,count\n'
+        loop = 0 
         for log in self.getLogs():
+            loop = loop + 1
+            if loop > 50:
+                break
             #if log['score'] < 0.21:
             #    continue
             l = re.sub('[^a-zA-Z _:-]', "", log['log'])
             l = l.strip()
             words = l.split(' ')
             lc = ""
+            
             for w in words:
                 lc = lc + w + ' '
                 if len(lc) > 15:

@@ -18,21 +18,17 @@
 
     <!-- Custom CSS -->
     <link href="css/heroic-features.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/unified.css" rel="stylesheet">
+
     <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+    <script src="js/libs/jquery.js"></script>
 
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="js/libs/bootstrap.min.js"></script>
 
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-
-    <![endif]-->
 
 
     <!-- Controler -->
@@ -43,6 +39,11 @@
 
 <body>
 
+<!--Symptom Model Training
+Resutful API
+Help
+Contact
+-->
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
@@ -92,18 +93,48 @@
 <div class="container">
 
     <!-- Jumbotron Header -->
-    <div id="div_search" class="container">
+    <div class="row">
+
+    <div id="div_search" class="container col-md-10">
+
         <h3>Problem Analysis</h3>
         <div class="form-group">
-            <textarea class="form-control" rows="7" id="text_search_input"></textarea>
+            <textarea class="form-control" rows="5" id="text_search_input"></textarea>
         </div>
+        <!--
         <label class="control-label">Select File</label>
-        <input id="input_file_upload" name="input2[]" type="file" class="btn btn-default btn-file" multiple
-               data-show-upload="false" data-show-caption="true">
+
+        <label class="btn btn-default btn-file">
+            Browse <input type="file" style="display: none;">
+        </label>
+
+        <p> <input id="input_file_upload" name="input2[]" type="file" class="btn btn-default btn-file" multiple
+               data-show-upload="false" data-show-caption="true"> </p> -->
 
 
-        <p>
-        <p><a onclick="makesearch()" class="btn btn-primary btn-large">Analyze!</a></p>
+        <div class="col-lg-9 col-sm-9">
+            <div class="input-group">
+                <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                        Browse… <input  onchange="uploadOnChange()" id="input_file_upload" name="input2[]" multiple
+                                        data-show-upload="false" type="file" style="display: none;" multiple="">
+                    </span>
+                </label>
+                <input id="input_file_upload_text" type="text" class="form-control" readonly="">
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-sm-3">
+            <button   id="btn_analyze" onclick="makesearch()" style="float: right;" class="btn btn-success btn-primary btn-large">Analyze!  </button>
+        </div>
+
+    </div>
+
+
+
+
+
 
     </div>
     <hr>
@@ -111,63 +142,12 @@
     <div class="row">
 
         <!-- Blog Entries Column -->
-        <div id="div_top_hit" class="col-md-8">
+        <div id="div_top_hit" class="col-md-10">
         </div>
 
-        <div id="div_search_result" class="col-md-8" style="display: none;">
+        <div id="div_search_result" class="col-md-10" style="display: none;">
         </div>
 
-        <!-- Blog Sidebar Widgets Column -->
-        <div class="col-md-4">
-
-            <!-- Blog Search Well -->
-            <div class="well">
-                <h4>KB Keyword Search</h4>
-                <div class="input-group">
-                    <input type="text" class="form-control">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                        </span>
-                </div>
-                <!-- /.input-group -->
-            </div>
-
-            <!-- Blog Categories Well -->
-            <div class="well">
-                <h4>Quick Link</h4>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <ul class="list-unstyled">
-                            <li><a href="#" onclick="displayhits()">Top Hits</a>
-                            </li>
-                            <li><a href="#">Category Name</a>
-                            </li>
-                            <li><a href="#">Category Name</a>
-                            </li>
-                            <li><a href="#">Category Name</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- /.col-lg-6 -->
-                    <div class="col-lg-6">
-                        <ul class="list-unstyled">
-                            <li><a href="#">Category Name</a>
-                            </li>
-                            <li><a href="#">Category Name</a>
-                            </li>
-                            <li><a href="#">Category Name</a>
-                            </li>
-                            <li><a href="#">Category Name</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
 
     </div>
 
@@ -186,7 +166,6 @@
 
     </div>
 </div>
-
 
 </body>
 

@@ -15,3 +15,15 @@ function replaceTag(tag) {
 function safe_tags_replace(str) {
     return str.replace(/[&<>]/g, replaceTag);
 }
+
+
+function uploadOnChange() {
+
+    var filename = $('#input_file_upload').val();
+    console.log(filename);
+    var lastIndex = filename.lastIndexOf("\\");
+    if (lastIndex >= 0) {
+        filename = filename.substring(lastIndex + 1);
+    }
+    document.getElementById('input_file_upload_text').value = filename;
+}
