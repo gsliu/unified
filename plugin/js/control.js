@@ -1,39 +1,47 @@
-var pageContent = "";
+
+var query;
 
 chrome.runtime.onMessage.addListener(function(request, sender) {
-  if (request.action == "getSource") {
-    pageContent = request.source; 
-  }
+    if (request.action == "getSource") {
+        query = request.source;
+    }
 });
-
 
 function onWindowLoad() {
 
-  //var message = document.querySelector('#message');
+    var message = document.querySelector('#message');
 
-  chrome.tabs.executeScript(null, {
-    file: "js/getPage.js"
-  }, function() {
-    // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-    if (chrome.runtime.lastError) {
-      pageContent = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
-    }
-  });
+    chrome.tabs.executeScript(null, {
+        file: "js/getpage.js"
+    }, function() {
+        // If you try and inject into an extensions page or the webstore/NTP you'll get an error
+        if (chrome.runtime.lastError) {
+            query = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
+        }
+    });
 
 }
 
 window.onload = onWindowLoad;
 
+
+
+
+
 $("#btn_analyze").click( function() {
-  makesearch();
+    query = query.replace(/[ \t\n\r]+[\n\r]/g, "");
+    query = query.replace(/<head.*head>/g, "");
+    query = query.replace(/<[^>]*>/g, "");
+    query = query.replace(/[ \t\n\r]+[\n\r]/g, "");
+
+    query = encodeURIComponent(query);
+
+    makesearch();
 });
 
 var dosearch = false;
 
 function makesearch() {
-
-
-    query = pageContent;
     //query = html2text(pageContent);
     console.log(query);
     
@@ -48,8 +56,6 @@ function makesearch() {
     textsearch(query);
 
     dosearch = false;
-
-
 }
 
 
@@ -94,16 +100,18 @@ function textsearch(query) {
                     //var text = safe_tags_replace(result["text"])
                     var text = (result["text"]);
 
-                    kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> <p><b></b>Similarity:</b>'
+                    kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> ' +
+                        '<p><a href="' + result["url"] + '" >' + result["url"] + '</a></p>' +
+                        '<p><b>Similarity:</b>'
                     var j = 0
                     for( ; j < result['rank']; j ++) {
-                        kbhtml = kbhtml + '<a href="#"> <span class="glyphicon glyphicon-star"></span> </a>'
+                        kbhtml = kbhtml + '<a href="#"> <span style="color:#FFD700" class="glyphicon glyphicon-star"></span> </a>'
                     }
 
                     for(; j < 5; j ++) {
-                        kbhtml = kbhtml + '<a href="#"><span class="glyphicon glyphicon-star-empty"></span> </a>'
+                        kbhtml = kbhtml + '<a href="#"><span style="color:#FFD700" class="glyphicon glyphicon-star-empty"></span> </a>'
                     }
-                    kbhtml = kbhtml + '<a style="float:right" href="http://unified.eng.vmware.com/symptom.html?id=' + kbnumber +'">Symptom Details</a>'
+                    kbhtml = kbhtml + '<a style="float:right" href="http://unified.eng.vmware.com/symptom.html?id=' + kbnumber +'"><b>Symptom Details</b></a>'
 
                     //kbhtml = kbhtml + '</p> <p><a class="btn btn-primary" href="#">Comments <span class="glyphicon glyphicon-chevron-right"></span></a></p><hr></div>'
                     kbhtml = kbhtml + '</p> <hr></div>'
@@ -130,6 +138,7 @@ function textsearch(query) {
 
             $('#btn_analyze').empty();
             $('#btn_analyze').append('Analyze!');
+            dosearch = false;
 
         }
     })

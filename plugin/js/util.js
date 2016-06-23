@@ -17,13 +17,14 @@ function safe_tags_replace(str) {
 }
 
 
-function uploadOnChange() {
 
-    var filename = $('#input_file_upload').val();
-    console.log(filename);
-    var lastIndex = filename.lastIndexOf("\\");
-    if (lastIndex >= 0) {
-        filename = filename.substring(lastIndex + 1);
-    }
-    document.getElementById('input_file_upload_text').value = filename;
+
+function getText(){
+    return document.body.innerText
 }
+function getHTML(){
+    return document.body.outerHTML
+}
+
+
+
