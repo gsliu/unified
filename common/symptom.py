@@ -19,11 +19,13 @@ class Symptom:
         #print self.data
         self.kbnumber = kb
         self.logs = []
+        self.keywords = []
         if self.data:
             self.symptomscore = self.data[0][3]
             self.logcount = self.data[0][4]
             self.new = 0
             self.loadLog()
+            self.loadKeyword()
         else:
             self.new = 1
             self.logcount = 0
@@ -36,6 +38,16 @@ class Symptom:
         for row in self.data:
           # print row
            self.logs.append({'log':row[1], 'score':float(row[2])})
+
+    def loadKeyword(self):
+        sql = 'SELECT * FROM `keyword2_symptom` where score  and kbnumber = ' +  str(self.kbnumber)
+        cursor.execute(sql)
+        self.data = cursor.fetchall()
+        for row in self.data:
+          # print row
+           self.keywords.append({'keyword':row[1], 'score':float(row[2])})
+
+
 
      
     def addLog(self, log):
@@ -54,8 +66,26 @@ class Symptom:
     def getScore(self):
         return self.score
  
+    def getKeywords(self):
+        return self.keywords
+
+
+ 
     def getLogs(self):
         return self.logs
+
+    def getKeywordsDemo(self):
+        ret = 'name,count\n'
+        loop = 0 
+        for keyword in self.getKeywords():
+            loop = loop + 1
+            if loop > 50:
+                break
+            #if log['score'] < 0.21:
+            #    continue
+         
+            ret = ret + keyword['keyword'] + ',' + str(keyword['score'] *10) + '\n'
+
 
     def getLogsDemo(self):
         ret = 'name,count\n'
@@ -144,11 +174,13 @@ if __name__ == "__main__":
     #print s.getLogs()
     #log2 = {'log':'test log2', 'score':float(1.523)}
     #s.addLog(log2)
-    print s.getLogs()
+    #print s.getLogs()
         
-    log = {}
-    log['log'] = 'ToolsBackup: '
-    log['score'] = 0.3
-    print s.hasLog(log)
-    s.updateIncreaseLog(log)
-    print s.getLogs()
+    #log = {}
+    #log['log'] = 'ToolsBackup: '
+    #log['score'] = 0.3
+    #print s.hasLog(log)
+    #s.updateIncreaseLog(log)
+    #print s.getLogs()
+    print s.getKeywords()
+    print s.getKeywordsDemo()

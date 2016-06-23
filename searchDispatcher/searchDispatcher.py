@@ -226,6 +226,25 @@ class LogDetails(Resource):
 
  
 
+class KeywordDetails(Resource):
+    def get(self, kbnumber):
+        print kbnumber
+        s = Symptom(kbnumber)
+        ret = s.getKeywordsDemo()
+        if len(ret) == 0:
+            return "",  200, {'Access-Control-Allow-Origin': '*'}
+        print ret
+        r = make_response(ret)
+        r.headers['Content-Type'] = 'text/plain'
+        r.headers['Access-Control-Allow-Origin'] = '*'
+        print r
+        return r
+        #return json.dumps(ret,  cls=ComplexEncoder), 200, {'Access-Control-Allow-Origin': '*'}
+
+ 
+
+
+
 
 
 
@@ -254,6 +273,7 @@ class Service:
         self.api.add_resource(TopHitKB, '/tophit')
         self.api.add_resource(SymptomDetail, '/symptom')
         self.api.add_resource(LogDetails, '/logs/<kbnumber>')
+        self.api.add_resource(KeywordDetails, '/keywords/<kbnumber>')
  
 
     def start(self):

@@ -16,7 +16,8 @@ class Matcher:
     def loadSymptoms(self, minscore) :
         cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
         cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
-        sql = 'SELECT kbnumber FROM `symptom` where symptomscore > %2.8f ' % minscore
+        #sql = 'SELECT kbnumber FROM `symptom` where symptomscore > %2.8f ' % minscore
+        sql = 'select kbnumber from log_symptom2 group by kbnumber having sum(score) > %2.8f' % minscore
         #sql = u'SELECT * FROM symptom'
         #print sql
         cursor.execute(sql)

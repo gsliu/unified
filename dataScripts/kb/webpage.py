@@ -146,7 +146,10 @@ class IKBPage( WebPage ):
         return s.get_data()
 
     def get_text(self):
-        return self.get_symptoms() + self.get_cause() + self.get_purpose() + self.get_details() + self.get_solution() + self.get_resolution()
+        ret = self.get_symptoms() + self.get_cause() + self.get_purpose() + self.get_details() + self.get_solution() + self.get_resolution()
+        ret = re.sub(r'[<>]', "", ret)
+        return ret
+
 
  
     def get_fulltext(self):
