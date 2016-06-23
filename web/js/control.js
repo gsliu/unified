@@ -52,6 +52,8 @@ function textsearch() {
     var query = $('#text_search_input').val();
     console.log("textMatch::" + query);
 
+    $('#btn_analyze').empty();
+    $('#btn_analyze').append('<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Processing...');
     var t1 = new Date();
     query = query.replace(/\r?\n|\r/g, " ");
     console.log("searching ...." + query);
@@ -124,7 +126,8 @@ function textsearch() {
 
             }
 
-
+            $('#btn_analyze').empty();
+            $('#btn_analyze').append('Analyze!');
 
         }
     })
