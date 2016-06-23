@@ -231,9 +231,6 @@ class KeywordDetails(Resource):
         print kbnumber
         s = Symptom(kbnumber)
         ret = s.getKeywordsDemo()
-        if len(ret) == 0:
-            return "",  200, {'Access-Control-Allow-Origin': '*'}
-        print ret
         r = make_response(ret)
         r.headers['Content-Type'] = 'text/plain'
         r.headers['Access-Control-Allow-Origin'] = '*'

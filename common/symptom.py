@@ -1,5 +1,6 @@
 import re
 import MySQLdb
+import random
 import mysql.connector
 import MySQLdb.cursors
 
@@ -40,7 +41,7 @@ class Symptom:
            self.logs.append({'log':row[1], 'score':float(row[2])})
 
     def loadKeyword(self):
-        sql = 'SELECT * FROM `keyword2_symptom` where score  and kbnumber = ' +  str(self.kbnumber)
+        sql = 'SELECT * FROM `keyword2_symptom` where kbnumber = ' +  str(self.kbnumber)
         cursor.execute(sql)
         self.data = cursor.fetchall()
         for row in self.data:
@@ -84,7 +85,8 @@ class Symptom:
             #if log['score'] < 0.21:
             #    continue
          
-            ret = ret + keyword['keyword'] + ',' + str(keyword['score'] *10) + '\n'
+            ret = ret + keyword['keyword'] + ',' + str(keyword['score'] * random.randint(1, 10) + 1) + '\n'
+        return ret
 
 
     def getLogsDemo(self):
@@ -167,7 +169,7 @@ class Symptom:
 
 
 if __name__ == "__main__":
-    s = Symptom(2045116 )
+    s = Symptom(1017910)
 
     #log1 = {'log':'test log', 'score':float(0.123)}
     #s.addLog(log1)
