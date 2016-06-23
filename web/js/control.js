@@ -94,16 +94,16 @@ function textsearch() {
 
                     kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> ' +
                             '<p><a href="' + result["url"] + '" >' + result["url"] + '</a></p>' +
-                        '<p><b></b>Similarity:</b>'
+                        '<p><b>Similarity:</b>'
                     var j = 0
                     for( ; j < result['rank']; j ++) {
-                        kbhtml = kbhtml + '<a href="#"> <span class="glyphicon glyphicon-star"></span> </a>'
+                        kbhtml = kbhtml + '<a href="#"> <span style="color:#FFD700" class="glyphicon glyphicon-star"></span> </a>'
                     }
 
                     for(; j < 5; j ++) {
-                        kbhtml = kbhtml + '<a href="#"><span class="glyphicon glyphicon-star-empty"></span> </a>'
+                        kbhtml = kbhtml + '<a href="#"><span style="color:#FFD700" class="glyphicon glyphicon-star-empty"></span> </a>'
                     }
-                    kbhtml = kbhtml + '<a style="float:right" href="/symptom.html?id=' + kbnumber +'">Symptom Details</a>'
+                    kbhtml = kbhtml + '<a style="float:right" href="/symptom.html?id=' + kbnumber +'"><b>Symptom Details</b></a>'
 
                     //kbhtml = kbhtml + '</p> <p><a class="btn btn-primary" href="#">Comments <span class="glyphicon glyphicon-chevron-right"></span></a></p><hr></div>'
                     kbhtml = kbhtml + '</p> <hr></div>'
@@ -176,7 +176,7 @@ function listtophits() {
 
                     kbhtml = '<div><h4><a href="' + result["url"] + '">' + result["title"] + '</a></h4><p>' + result["text"] +
                         '</p><p><a href="' + result["url"] + '" >' + result["url"] + '</a></p>' +
-                        '<p> <b>' + res[i]['hits']+ '</b> in total <a style="float:right" href="/symptom.html?id=' + kbnumber +'">Symptom Details</a></p> ' +
+                        '<p> <b>' + res[i]['hits']+ '</b> in total <a style="float:right" href="/symptom.html?id=' + kbnumber +'"><b>Symptom Details</b></a></p> ' +
                         ' <hr></div>'
 
                     $("#div_top_hit").append(kbhtml);
@@ -250,14 +250,14 @@ function filesearch() {
 
                     kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> ' +
                         '<p><a href="' + result["url"] + '" >' + result["url"] + '</a></p>' +
-                        '<p><b></b>Similarity:</b>'
+                        '<p><b>Similarity:</b>'
                     var j = 0
                     for( ; j < result['rank']; j ++) {
-                        kbhtml = kbhtml + '<a href="#"> <span class="glyphicon glyphicon-star"></span> </a>'
+                        kbhtml = kbhtml + '<a href="#"> <span style="color:#FFD700" class="glyphicon glyphicon-star"></span> </a>'
                     }
 
                     for(; j < 5; j ++) {
-                        kbhtml = kbhtml + '<a href="#"><span class="glyphicon glyphicon-star-empty"></span> </a>'
+                        kbhtml = kbhtml + '<a href="#"><span style="color:#FFD700" class="glyphicon glyphicon-star-empty"></span> </a>'
                     }
                     kbhtml = kbhtml + '<a style="float:right" href="/symptom.html?id=' + kbnumber +'">Symptom Details</a>'
                     //kbhtml = kbhtml + '</p> <p><a class="btn btn-primary" href="#">Comments <span class="glyphicon glyphicon-chevron-right"></span></a></p><hr></div>'

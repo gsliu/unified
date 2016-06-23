@@ -35,7 +35,8 @@ function refreshChart() {
 
 
             kbhtml = '<div><h3><a href="' + res["url"] + '">' + res["title"] + '</a></h3><p>' + res["text"] +
-                '</p> <p>Total <b>' + res['total']+ '</b> Hits </p> ' +
+                '</p> <p><a href="' + res["url"] + '" >' + res["url"] + '</a></p>'
+                '<p>Total <b>' + res['total']+ '</b> Hits </p> ' +
                 ' <hr></div>'
 
             $("#div_kb_info").append(kbhtml);
@@ -76,7 +77,7 @@ $(function () {
         },
 
         title: {
-            text: 'Hits Htatistics'
+            text: 'Hits Statistics'
         },
         /*
         subtitle: {

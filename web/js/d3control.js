@@ -5,8 +5,8 @@ var Bubbles, root, texts;
 root = typeof exports !== "undefined" && exports !== null ? exports : this;
 Bubbles = function() {
     var chart, clear, click, collide, collisionPadding, connectEvents, data, force, gravity, hashchange, height, idValue, jitter, label, margin, maxRadius, minCollisionRadius, mouseout, mouseover, node, rScale, rValue, textValue, tick, transformData, update, updateActive, updateLabels, updateNodes, width;
-    width = 980;
-    height = 510;
+    width = 1000;
+    height = 500;
     data = [];
     node = null;
     label = null;
@@ -265,7 +265,9 @@ function loadsymptom(kbnumber) {
 
 }
 
-$(function() {
+
+
+function loadd3(type) {
 
     kbnumber = getUrlParameter('id')
 
@@ -290,11 +292,34 @@ $(function() {
         location.replace("#");
         return location.search = encodeURIComponent(key);
     });
-     d3.select("#book-title").html('Symptom Data Model Details')
 
+    if (type === "keywords") {
+        d3.select("#book-title").html('Symptom Data Model Details - <b>Key Words</b>');
+    } else {
+        d3.select("#book-title").html('Symptom Data Model Details - <b>Log Clips</b>');
+    }
     console.trace();
     //return d3.csv("data/" + text.file, display);
-    return d3.csv("http://unified.eng.vmware.com:8000/logs/" + kbnumber, display);
+    return d3.csv("http://unified.eng.vmware.com:8000/" + type + "/" + kbnumber, display);
 
     
-});
+}
+
+
+
+
+function reload (type) {
+
+    localStorage.setItem("type", type);
+    location.reload();
+    
+}
+
+
+$(function () {
+
+    type = localStorage.getItem("type");
+    console.log(type);
+    loadd3(type);
+
+})
