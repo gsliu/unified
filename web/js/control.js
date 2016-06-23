@@ -37,7 +37,7 @@ function makesearch() {
     console.log($('#input_file_upload').get(0).files)
     if($('#input_file_upload').get(0).files.length ==0) {
         textsearch();
-        dosearch = false;
+
     } else {
 
         filesearch();
@@ -92,7 +92,9 @@ function textsearch() {
                     //var text = safe_tags_replace(result["text"])
                     var text = (result["text"]);
 
-                    kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> <p><b></b>Similarity:</b>'
+                    kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> ' +
+                            '<p><a href="' + result["url"] + '" >' + result["url"] + '</a></p>' +
+                        '<p><b></b>Similarity:</b>'
                     var j = 0
                     for( ; j < result['rank']; j ++) {
                         kbhtml = kbhtml + '<a href="#"> <span class="glyphicon glyphicon-star"></span> </a>'
@@ -128,6 +130,7 @@ function textsearch() {
 
             $('#btn_analyze').empty();
             $('#btn_analyze').append('Analyze!');
+            dosearch = false;
 
         }
     })
@@ -172,7 +175,8 @@ function listtophits() {
                     console.log(kbnumber);
 
                     kbhtml = '<div><h4><a href="' + result["url"] + '">' + result["title"] + '</a></h4><p>' + result["text"] +
-                        '</p> <b>' + res[i]['hits']+ '</b> in total <a style="float:right" href="/symptom.html?id=' + kbnumber +'">Symptom Details</a></p> ' +
+                        '</p><p><a href="' + result["url"] + '" >' + result["url"] + '</a></p>' +
+                        '<p> <b>' + res[i]['hits']+ '</b> in total <a style="float:right" href="/symptom.html?id=' + kbnumber +'">Symptom Details</a></p> ' +
                         ' <hr></div>'
 
                     $("#div_top_hit").append(kbhtml);
@@ -244,7 +248,9 @@ function filesearch() {
                     //var text = safe_tags_replace(result["text"])
                     var text = (result["text"]);
 
-                    kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> <p><b></b>Similarity:</b>'
+                    kbhtml = '<div><h4><a href="' + result["url"] + '">' + title + '</a></h4><p>' + text + '</p> ' +
+                        '<p><a href="' + result["url"] + '" >' + result["url"] + '</a></p>' +
+                        '<p><b></b>Similarity:</b>'
                     var j = 0
                     for( ; j < result['rank']; j ++) {
                         kbhtml = kbhtml + '<a href="#"> <span class="glyphicon glyphicon-star"></span> </a>'

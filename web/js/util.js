@@ -27,3 +27,10 @@ function uploadOnChange() {
     }
     document.getElementById('input_file_upload_text').value = filename;
 }
+
+function reset() {
+    $('#input_file_upload').val("");
+    $('#text_search_input').val("");
+
+
+}
