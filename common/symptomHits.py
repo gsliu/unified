@@ -10,17 +10,15 @@ sys.path.append('..')
 from dataScripts.kb.webpage import IKBPage
 
 
+cnx = mysql.connector.connect(user='root',password='vmware', database='unified', buffered=True)
+
+cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
+   
+
 class SymptomHits:
-    def __init__(self):
-
-        global cnx
-        cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
-
-        global cursor
-        cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
-    
     def topHits(self):
         sql = 'select kbnumber,  sum(hits) as total from symptom_hits group by kbnumber ORDER by total DESC'
+        cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
         cursor.execute(sql)
         data = cursor.fetchall()
         ret = []
@@ -28,20 +26,25 @@ class SymptomHits:
           # print row
            ret.append({'kbnumber':row[0], 'hits':row[1]})
         ret = ret[0:15]
+        cursor.close()
         return ret
 
     def hit(self, kbnumber):
         #d = datetime.datetime.strptime('my date', "%b %d %Y %H:%M")
         sql = 'INSERT INTO `symptom_hits`(`kbnumber`, `hits`, `time` ) VALUES (%d, 1, CURRENT_DATE())' % ( kbnumber)
+        cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
         print sql
         cursor.execute(sql)
         cnx.commit()
+        cursor.close()
 
     def getHits(self, kbnumber):
         sql = 'select sum(hits) from symptom_hits where kbnumber = %d' % kbnumber
+        cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
         cursor.execute(sql)
         data = cursor.fetchall()
           # print row
+        cursor.close()
         return data[0][0]
   
     def topHitsFull(self):
@@ -65,6 +68,8 @@ class SymptomHits:
         return jret
         #print j
     def getGroupHits(self, kbnumber):
+
+        cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
         sql = 'SELECT DATE(time) DateOnly,  SUM(hits) FROM symptom_hits where kbnumber = %d GROUP BY DateOnly' % kbnumber
         print sql
         cursor.execute(sql)
@@ -74,6 +79,7 @@ class SymptomHits:
             h = {'time':d[0].strftime('%d, %b %Y'), 'hits': str(d[1])}
             ret.append(h)
         print ret
+        cursor.close()
         return ret
         
  

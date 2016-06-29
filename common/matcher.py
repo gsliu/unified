@@ -9,7 +9,7 @@ from  symptom import Symptom
 
 
 class Matcher:
-    def __init__(self, minscore=1.0 ):
+    def __init__(self, minscore=2.5 ):
         self.symptoms = self.loadSymptoms(minscore )
        
 
