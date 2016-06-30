@@ -5,6 +5,7 @@ import MySQLdb
 #from .. import symptom
 
 from  symptom import Symptom
+from dbConn import getQueryUnified
 
 
 
@@ -14,22 +15,20 @@ class Matcher:
        
 
     def loadSymptoms(self, minscore) :
-        cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
-        cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
-        #sql = 'SELECT kbnumber FROM `symptom` where symptomscore > %2.8f ' % minscore
         sql = 'select kbnumber from log_symptom2 group by kbnumber having sum(score) > %2.8f' % minscore
-        #sql = u'SELECT * FROM symptom'
-        #print sql
-        cursor.execute(sql)
-        data = cursor.fetchall()
+        query = getQueryUnified()
+        query.Query(sql)
+
+        print query.record
+        
         
 
         s = []
         i = 0
-        for kbnumber in data:
+        for row in query.record:
             i = i + 1
-            print ' %d  loading symptom %d ...' % (i, kbnumber[0])
-            t = Symptom(kbnumber[0])
+            print ' %d  loading symptom %d ...' % (i, row['kbnumber'])
+            t = Symptom(row['kbnumber'])
             #print t.getLogs()
             s.append(t)
         return s
@@ -37,10 +36,18 @@ class Matcher:
     def getSymptoms(self):
         return self.symptoms
 
+    def findSymptom(self, kbnumber):
+        for s in self.symptoms:
+            if s.getKbnumber() == kbnumber:
+                return s
+        return None
+
 
 if __name__ == '__main__':
     m = Matcher()
     sym = m.getSymptoms()
-    for s in sym:
-        print s.getLogs()
+    s = m.findSymptom(1010733)
+    print s.getLogs()
+    #for s in sym:
+    #    print s.getLogs()
    

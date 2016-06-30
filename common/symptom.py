@@ -1,29 +1,24 @@
 import re
 import MySQLdb
 import random
-import mysql.connector
-import MySQLdb.cursors
+from dbConn import getQueryUnified
 
 
 
-#global connection
-cnx = mysql.connector.connect(user='root',password='vmware', database='unified')
-cursor = cnx.cursor(MySQLdb.cursors.DictCursor)
 
 class Symptom:
     def __init__(self, kb):
 
         sql = 'SELECT * FROM `symptom` where kbnumber = ' +  str(kb)
-        cursor.execute(sql)
-        self.data = cursor.fetchall()
+        query = getQueryUnified()
+        query.Query(sql)
+        data = query.record
 
-        #print self.data
+
         self.kbnumber = kb
         self.logs = []
         self.keywords = []
-        if self.data:
-            self.symptomscore = self.data[0][3]
-            self.logcount = self.data[0][4]
+        if data:
             self.new = 0
             self.loadLog()
             self.loadKeyword()
@@ -34,32 +29,32 @@ class Symptom:
     
     def loadLog(self):
         sql = 'SELECT * FROM `log_symptom2` where kbnumber = ' +  str(self.kbnumber)
-        cursor.execute(sql)
-        self.data = cursor.fetchall()
-        for row in self.data:
+        query = getQueryUnified()
+        query.Query(sql)
+        data = query.record
+
+
+        for row in data:
           # print row
-           self.logs.append({'log':row[1], 'score':float(row[2])})
+           self.logs.append({'log':row['log'], 'score':float(row['score'])})
 
     def loadKeyword(self):
         sql = 'SELECT * FROM `keyword2_symptom` where kbnumber = ' +  str(self.kbnumber)
-        cursor.execute(sql)
-        self.data = cursor.fetchall()
-        for row in self.data:
-          # print row
-           self.keywords.append({'keyword':row[1], 'score':float(row[2])})
+        query = getQueryUnified()
+        query.Query(sql)
+        data = query.record
+        for row in data:
+           self.keywords.append({'keyword':row['keyword'], 'score':float(row['score'])})
 
 
 
      
     def addLog(self, log):
-        self.logcount = self.logcount + 1
-        self.symptomscore = self.symptomscore + log['score']  
         #print log
         sql = 'INSERT INTO `log_symptom2`(`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
         print sql
-        cursor.execute(sql)
-        cnx.commit()
-        self.save()
+        query = getQueryUnified()
+        query.Query(sql)
 
     def getKbnumber(self):
         return self.kbnumber
@@ -136,9 +131,8 @@ class Symptom:
 
     def updateLog(self, log):
         sql = 'UPDATE `log_symptom2` SET `score`= %2.8f WHERE kbnumber = "%s" and log = "%s"' % ( log['score'], self.kbnumber, log['log'])
-        cursor.execute(sql)
-        cnx.commit()
-        self.save()
+        query = getQueryUnified()
+        query.Query(sql)
         
         
 
@@ -146,9 +140,10 @@ class Symptom:
     def deleteLog(self, log):
    
         sql = 'delete from log_symptom2 where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
-        cursor.execute(sql)
-        cnx.commit()
-        self.save()
+        query = getQueryUnified()
+        query.Query(sql)
+        
+     
         self.logcount = self.logcount - 1
         self.symptomscore = self.symptomscore - log['score']  
 
@@ -160,10 +155,10 @@ class Symptom:
             sql = 'INSERT INTO `symptom`(`kbnumber`, `symptomscore`, `logcount` ) VALUES (%d, %2.8f , %d)' % ( self.kbnumber, self.symptomscore, self.logcount)
         else:
             sql = 'UPDATE symptom SET `kbnumber`= "%d",`symptomscore`=%2.8f, `logcount` = %d WHERE `kbnumber`=%d ' % (self.kbnumber, self.symptomscore, self.logcount, self.kbnumber)
-            
-        #print sql
-        cursor.execute(sql)
-        cnx.commit()
+        query = getQueryUnified()
+        query.Query(sql)
+        
+             
 
 
 

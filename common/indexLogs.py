@@ -1,7 +1,5 @@
 import sys
 import os
-import mysql.connector
-import MySQLdb
 import pyes
 import json
 

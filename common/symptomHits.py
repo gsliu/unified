@@ -1,51 +1,45 @@
 import re
 import MySQLdb
-import mysql.connector
-import MySQLdb.cursors
 import sys
 import json
 import datetime
 sys.path.append('..')
 
 from dataScripts.kb.webpage import IKBPage
+from dbConn import getQueryUnified
 
 
-cnx = mysql.connector.connect(user='root',password='vmware', database='unified', buffered=True)
 
-cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
    
 
 class SymptomHits:
     def topHits(self):
         sql = 'select kbnumber,  sum(hits) as total from symptom_hits group by kbnumber ORDER by total DESC'
-        cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
-        cursor.execute(sql)
-        data = cursor.fetchall()
+        query = getQueryUnified()
+        query.Query(sql)
+        data = query.record
+
+
         ret = []
         for row in data:
           # print row
-           ret.append({'kbnumber':row[0], 'hits':row[1]})
+           ret.append({'kbnumber':row['kbnumber'], 'hits':row['total']})
         ret = ret[0:15]
-        cursor.close()
         return ret
 
     def hit(self, kbnumber):
         #d = datetime.datetime.strptime('my date', "%b %d %Y %H:%M")
         sql = 'INSERT INTO `symptom_hits`(`kbnumber`, `hits`, `time` ) VALUES (%d, 1, CURRENT_DATE())' % ( kbnumber)
-        cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
+        query = getQueryUnified()
+        query.Query(sql)
         print sql
-        cursor.execute(sql)
-        cnx.commit()
-        cursor.close()
 
     def getHits(self, kbnumber):
-        sql = 'select sum(hits) from symptom_hits where kbnumber = %d' % kbnumber
-        cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
-        cursor.execute(sql)
-        data = cursor.fetchall()
-          # print row
-        cursor.close()
-        return data[0][0]
+        sql = 'select sum(hits) as total from symptom_hits where kbnumber = %d' % kbnumber
+        query = getQueryUnified()
+        query.Query(sql)
+        data = query.record
+        return data[0]['total']
   
     def topHitsFull(self):
         kbs = self.topHits()
@@ -58,7 +52,6 @@ class SymptomHits:
                 j['url'] = 'http://kb.vmware.com/kb/%d' % kb['kbnumber']
                 j['title'] = page.get_title()
                 j['text'] = page.get_text()[0:300] + '...'
-                #j['text'] = 'aaaaaa'
                 j['hits'] = str(kb['hits']) + ' hits'
         
                 jret.append(j)
@@ -69,17 +62,17 @@ class SymptomHits:
         #print j
     def getGroupHits(self, kbnumber):
 
-        cursor = cnx.cursor(MySQLdb.cursors.DictCursor )
-        sql = 'SELECT DATE(time) DateOnly,  SUM(hits) FROM symptom_hits where kbnumber = %d GROUP BY DateOnly' % kbnumber
+        sql = 'SELECT DATE(time) DateOnly ,  SUM(hits) as total FROM symptom_hits where kbnumber = %d GROUP BY DateOnly' % kbnumber
         print sql
-        cursor.execute(sql)
-        data = cursor.fetchall()
+        query = getQueryUnified()
+        query.Query(sql)
+        data = query.record
+
+
         ret = []
         for d in data:
-            h = {'time':d[0].strftime('%d, %b %Y'), 'hits': str(d[1])}
+            h = {'time':d['DateOnly'].strftime('%d, %b %Y'), 'hits': str(d['total'])}
             ret.append(h)
-        print ret
-        cursor.close()
         return ret
         
  
