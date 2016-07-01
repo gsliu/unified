@@ -2,11 +2,15 @@
 
 from datetime import datetime
 from elasticsearch import Elasticsearch
-from webpage import IKBPage
 from os import listdir
 from os.path import isfile, join
+import sys
 
-class IKB_to_ES_Loader:
+sys.path.append('.')
+
+from lib.kb.kbPage import KBPage
+
+class KBESLoader:
 
 ##############################################################################
 # RedHat Database structure:
@@ -17,12 +21,12 @@ class IKB_to_ES_Loader:
 
     def __init__(self, dir):
         self.es = Elasticsearch()
-        self.index = 'ikb'
-        self.doc_type = 'kb'
+        self.index = 'kb'
+        self.doc_type = 'text'
         self.kb_dir = dir 
     #    self.create_index()      
     
-    def create_index(self): 
+    def createIndex(self): 
         # Create an index with settings and mapping, a line is a term
         #    1. add a new tokenizer which divide by /n
         #    2. add mappings to doc_type and field
@@ -70,6 +74,11 @@ class IKB_to_ES_Loader:
                             'analyzer':'whitespace'
                         },
 
+			'tags':{
+                            'type':'string',
+                            'analyzer':'whitespace'
+                        },
+
 
 
 
@@ -80,28 +89,35 @@ class IKB_to_ES_Loader:
         res = self.es.indices.create(index = self.index, body = doc)
         return res    
 
-    def index_item(self, page):
+    def indexItem(self, page):
 	doc = {
-            'url': page.get_url(),
-            'summary': page.get_title(),
-            'symptoms': page.get_symptoms(),
-            'resolution' : page.get_resolution(),
-      	    'solution' : page.get_solution(),
-      	    'cause' : page.get_cause(),
-       	    'purpose': page.get_purpose(),
-            'details': page.get_details(),
+            'url': page.getUrl(),
+            'summary': page.getTitle(),
+            'symptoms': page.getSymptoms(),
+            'resolution' : page.getResolution(),
+      	    'solution' : page.getSolution(),
+      	    'cause' : page.getCause(),
+       	    'purpose': page.getPurpose(),
+            'details': page.getDetails(),
+            'tags':page.getTags()
         }
-        res = self.es.index(index = self.index, doc_type = self.doc_type, id = page.get_id(), body = doc)
-	print 'DEBUG: indexed kb ' + str(page.get_id())
+        res = self.es.index(index = self.index, doc_type = self.doc_type, id = page.getKbnumber(), body = doc)
         return res['created']
 
-    def index_all(self):
+    def indexAll(self):
         # iter all kbs
+        i = 0 
         for f in listdir(self.kb_dir):
-            print "DEBUG: %s" %(f)
+            i = i + 1
+            print " %d DEBUG: %s" %(i, f)
             file = join(self.kb_dir, f)
             if isfile(file):
-                self.index_item(IKBPage(file))
+                page = KBPage(int(f))
+                tags = page.getTags()
+                if 'Mandarin' in tags  or 'Chinese' in tags or 'Japanese' in tags or 'Spanish' in tags or 'Portugues' in tags:
+                    print 'ignore other langurage kb %s' % page.getKbnumber()
+                    continue
+                self.indexItem(page)
 
 if __name__ == "__main__":
     #import sys
@@ -111,6 +127,6 @@ if __name__ == "__main__":
     #    exit(0)
     
     #loader = IKB_to_ES_Loader(sys.argv[1])
-    loader = IKB_to_ES_Loader('./data')
+    loader = KBESLoader('/data/kbdata')
 
-    loader.index_all()
+    loader.indexAll()

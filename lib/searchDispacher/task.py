@@ -1,14 +1,12 @@
 import os
 import thread
 import re 
-import mysql 
-import mysql.connector 
 import sys
-sys.path.append('..')
-from common.indexLogs import IndexLogs
+
+from lib.indexer.indexLogs import IndexLogs
 from logExtractor import esxiLogExtractor
  
-from common.dbConn import getQueryUnified
+from lib.dbConn import getQueryUnified
  
  
 def queryTask( id): 

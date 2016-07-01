@@ -6,14 +6,18 @@ import os
 import json
 from json import encoder
 import decimal
-sys.path.append('..')
-from common.textMatcher import TextMatcher
-from common.indexMatcher import IndexMatcher
-from common.indexLogs import IndexLogs
-from common.symptom import Symptom
-from common.symptomHits import SymptomHits
+sys.path.append('.')
+from lib.indexer.indexLogs import IndexLogs
+from lib.matcher.textMatcher import TextMatcher
+from lib.matcher.indexMatcher import IndexMatcher
+
+from lib.symptom import Symptom
+from lib.symptomHits import SymptomHits
 from task import createTask, startTask
-from dataScripts.kb.webpage import IKBPage
+from lib.kb.kbPage import KBPage
+
+
+
 
 class ComplexEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -192,16 +196,16 @@ class SymptomDetail(Resource):
         kbnumber = request.args.get('kbnumber')
         print kbnumber
         s = Symptom(kbnumber)
-        page = IKBPage('/data/data/kbraw/data/' + kbnumber)
+        page = IKBPage(kbnumber)
 
 #        hits = ""
 #        for h in sh.getGroupHits(int(kbnumber)):
 #            hits = hits + str(h)
 
         ret = {
-                  'url': 'http://kb.vmware.com/kb/' + kbnumber,
-                  'title': page.get_title(),
-                  'text': page.get_text()[0:500] + '...',
+                  'url': page.getURL(),
+                  'title': page.getTitle(),
+                  'text': page.getText()[0:500] + '...',
                   'log':s.getLogs(),
                   'total':str(sh.getHits(int(kbnumber))),
                   'hits': str(sh.getGroupHits(int(kbnumber))),

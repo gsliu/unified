@@ -67,11 +67,12 @@ class WebPage:
         return filterlinks    
 
 
-class IKBPage( WebPage ):
+class KBPage( WebPage ):
 
-    def __init__(self, filename='/data/data/kbraw/data'):
-        self.id = os.path.basename(filename)
-        url = "http://kb.vmware.com/kb/" + str(self.id)
+    def __init__(self, kbnumber, datadir='/data/kbdata'):
+	self.kbnumber = kbnumber
+	filename = os.path.join(datadir, str(kbnumber))
+        url = "http://kb.vmware.com/kb/" + str(self.kbnumber)
         with open(filename, 'r') as f:
             html = f.read()
         WebPage.__init__(self, url, html)
@@ -88,7 +89,7 @@ class IKBPage( WebPage ):
             pass
             #print "Warning: more than one body in html"
  
-    def get_title(self):
+    def getTitle(self):
         e = self.doc.findall('./head/title')
         if len(e) > 1:
             pass
@@ -98,10 +99,10 @@ class IKBPage( WebPage ):
         else:
             return e[0].text_content()
         
-    def get_id(self):
-        return self.id 
+    def getKbnumber(self):
+        return self.kbnumber 
 
-    def get_ele(self, name):
+    def getEle(self, name):
         for ele in self.body_els:
             e = ele.find_class(name)
             if len(e) > 1:
@@ -113,66 +114,49 @@ class IKBPage( WebPage ):
                 return e[0].text_content().strip()
         return  ""
 
-    def get_symptoms(self):
-        return self.get_ele(self.symptoms_class_name)
+    def getSymptoms(self):
+        return self.getEle(self.symptoms_class_name)
     
-    def get_cause(self):
-        return self.get_ele(self.cause_class_name)
+    def getCause(self):
+        return self.getEle(self.cause_class_name)
 
-    def get_purpose(self):
-        return self.get_ele(self.purpose_class_name)
+    def getPurpose(self):
+        return self.getEle(self.purpose_class_name)
     
-    def get_details(self):
-        return self.get_ele(self.details_class_name)
+    def getDetails(self):
+        return self.getEle(self.details_class_name)
 
-    def get_solution(self):
-        return self.get_ele(self.solution_class_name)
+    def getSolution(self):
+        return self.getEle(self.solution_class_name)
 
-    def get_resolution(self):
-        return self.get_ele(self.resolution_class_name)
+    def getResolution(self):
+        return self.getEle(self.resolution_class_name)
     
-    def get_tags(self):
-        return self.get_ele(self.tags_class_name)
+    def getTags(self):
+        return self.getEle(self.tags_class_name)
 
-    def get_url(self):
+    def getUrl(self):
         return self.url    
 
-    def get_log(self):
+    def getLog(self):
         return self.log
 
-    def strip_tags(self, html):
+    def stripTags(self, html):
         s = MLStripper()
         s.feed(html)
         return s.get_data()
 
-    def get_text(self):
-        ret = self.get_symptoms() + self.get_cause() + self.get_purpose() + self.get_details() + self.get_solution() + self.get_resolution()
+    def getText(self):
+        ret = self.getSymptoms() + self.getCause() + self.getPurpose() + self.getDetails() + self.getSolution() + self.getResolution()
         ret = re.sub(r'[<>]', "", ret)
         return ret
 
 
  
-    def get_fulltext(self):
-        return self.get_title() + self.get_symptoms() + self.get_cause() + self.get_purpose() + self.get_details() + self.get_solution() + self.get_resolution()
+    def getFullText(self):
+        return self.getTitle() + self.getSymptoms() + self.getCause() + self.getPurpose() + self.getDetails() + self.getSolution() + self.getResolution()
 
-    
-def test_ikb(filename):
-    page = IKBPage(filename)
-    
-    print page.get_id()
-    print page.get_resolution()
-    print page.get_solution()
-    print page.get_details()
-    print page.get_purpose()
-    print page.get_cause()
-    print page.get_symptoms()
-    print page.get_title()
-    print page.get_tags()
- 
 if __name__ == "__main__":
-    import sys
-    print len(sys.argv)
-    if len(sys.argv) < 2:
-        print "Please provide KB filename"
-        exit(0)
-    test_ikb(sys.argv[1])
+    kb = KBPage(2034627)
+    print kb.getKbnumber()
+    print kb.getFullText()

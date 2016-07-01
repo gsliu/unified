@@ -2,14 +2,16 @@ from datetime import datetime
 from elasticsearch import Elasticsearch
 from os import listdir
 from os.path import isfile, join
-from db_bz import get_bz_con
 
 from threading import Thread
 import config
 
+from lib.dbConn import GetQueryBugzilla
+
+
 begin = 1
 
-class VMBugzilla_to_ES_Loader:
+class BZESLoader:
 
 ##############################################################################
 # VMBugzilla Database structure: 
@@ -62,8 +64,10 @@ class VMBugzilla_to_ES_Loader:
 
     def create_item(self, bugid, bz_con, bz_cur):
         sql='select bug_id, creation_ts, bug_severity, priority, bug_status, assigned_to, reporter, category_id, component_id, short_desc from bugs where bug_id = %d' %(bugid)
-        bz_cur.execute(sql)
-        item = bz_cur.fetchall()
+        query = getQueryUnified()
+        query.Query(sql)
+        data = query.record
+
     
         assert(len(item) == 1)
         ans = list(item[0])

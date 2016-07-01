@@ -1,11 +1,9 @@
 import re
-import MySQLdb
 import sys
 import json
 import datetime
-sys.path.append('..')
 
-from dataScripts.kb.webpage import IKBPage
+from kb.kbPage import KBPage
 from dbConn import getQueryUnified
 
 
@@ -47,11 +45,11 @@ class SymptomHits:
         
         for kb in kbs:
             try:
-                page = IKBPage('/data/data/kbraw/data/%s' % kb['kbnumber'])
+                page = KBPage(kb['kbnumber'])
                 j = dict()
-                j['url'] = 'http://kb.vmware.com/kb/%d' % kb['kbnumber']
-                j['title'] = page.get_title()
-                j['text'] = page.get_text()[0:300] + '...'
+                j['url'] = page.getUrl()
+                j['title'] = page.getTitle()
+                j['text'] = page.getText()[0:300] + '...'
                 j['hits'] = str(kb['hits']) + ' hits'
         
                 jret.append(j)
@@ -85,10 +83,10 @@ class SymptomHits:
 
 if __name__ == "__main__":
     s = SymptomHits()
-    #s.hit(1009484)
-    #s.hit(1031636)
-    #s.hit(1005266)   
-    #print s.topHits()
+    s.hit(1009484)
+    s.hit(1031636)
+    s.hit(1005266)   
+    print s.topHits()
 
     print s.topHitsFull()
     #print json.dumps(s.topHitsFull())

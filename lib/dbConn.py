@@ -8,7 +8,7 @@ import PySQLPool
 #    'db': 'bugzilla'
 #}
 
-unifiedCon = PySQLPool.getNewConnection(username='root', password='vmware', host='unified.eng.vmware.com', db='unified')
+unifiedCon = PySQLPool.getNewConnection(username='root', password='vmware', host='unified-stage.eng.vmware.com', db='unified')
 bugzillaCon = PySQLPool.getNewConnection(username='mts', password='mts', host='bz3-db3.eng.vmware.com', db='bugzilla')
 
 def getQueryUnified():

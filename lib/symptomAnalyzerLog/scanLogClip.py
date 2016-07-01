@@ -1,21 +1,22 @@
 #!/usr/bin/python
 import re
 import os
-import mysql.connector
 import sys
-import MySQLdb
 import mimetypes
 import enchant
-from istext import istext 
 import thread
+import MySQLdb
+
+sys.path.append('.')
+
+from istext import istext 
+from lib.dbConn import getQueryUnified
 
 class ScanCodeClip():
  
     def initDb(self):
         reload(sys)
         sys.setdefaultencoding('utf-8')
-        self.cnx =  mysql.connector.connect(user='root', password="vmware", database='unified',  buffered = True)
-        self.cursor = self.cnx.cursor()
         self.dictus = enchant.Dict("en_US")
         self.dictgb = enchant.Dict("en_GB")
 
@@ -25,22 +26,20 @@ class ScanCodeClip():
         self.table = table
 
     def savelog(self, log):
-        query_log = ("select * from %s where log = \"%s\" ")  % (self.table, log)
-   
-        #print query_log
-        self.cursor.execute(query_log)
-        row = self.cursor.fetchone()
-        if row is not None:
+        sql = ("select * from %s where log = \"%s\" ")  % (self.table, log)
+        query = getQueryUnified()
+        query.Query(sql)
+        data = query.record
+
+        if len(data) > 0:
             print 'ignore ---->%s' % log
             return
    
-        add_log = ("INSERT INTO %s"
-                     "(log) "
-                     "VALUES ( \"%s\" )")  % (self.table, log)
+        sql = ("INSERT INTO %s (log) VALUES ( \"%s\" )")  % (self.table, log)
+        query = getQueryUnified()
+        query.Query(sql)
    
         print("insert----> %s") % log
-        self.cursor.execute(add_log) 
-        self.cnx.commit()
    
 
     def isqualified(self, log):
@@ -153,7 +152,7 @@ if __name__ == '__main__':
     #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/ui')
     #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora-soft')
     #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmcore')
-    runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/')
+    runset.append('/data/src/gengshengl/src/vsphere60p03')
     #runset.append('/mnt/dbc/gengshengl/src/view623/mojo/')
 
     sccs = []  

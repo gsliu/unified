@@ -1,5 +1,4 @@
 import re
-import MySQLdb
 import random
 from dbConn import getQueryUnified
 
@@ -28,7 +27,7 @@ class Symptom:
             self.symptomscore = 0
     
     def loadLog(self):
-        sql = 'SELECT * FROM `log_symptom2` where kbnumber = ' +  str(self.kbnumber)
+        sql = 'SELECT * FROM `log_symptom` where kbnumber = ' +  str(self.kbnumber)
         query = getQueryUnified()
         query.Query(sql)
         data = query.record
@@ -51,7 +50,7 @@ class Symptom:
      
     def addLog(self, log):
         #print log
-        sql = 'INSERT INTO `log_symptom2`(`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
+        sql = 'INSERT INTO `log_symptom` (`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
         print sql
         query = getQueryUnified()
         query.Query(sql)

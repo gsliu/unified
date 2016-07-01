@@ -2,10 +2,9 @@ import sys
 import re
 from esSearchLogClip import ESSearchLogClip 
 from mysqlLogClip import MysqlLogClip 
-sys.path.append("..")
-print sys.path
+sys.path.append(".")
 
-from common.symptom import Symptom 
+from lib.symptom import Symptom 
 
 reload(sys);
 sys.setdefaultencoding("utf8")

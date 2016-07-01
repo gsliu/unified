@@ -3,9 +3,8 @@ import os
 import sys
 import itertools
 
-sys.path.append('..')
 
-from dataScripts.kb.webpage import IKBPage
+from lib.kb.kbPage import KBPage
 
 
 #return value
@@ -29,11 +28,11 @@ def filterResult(ret, size, minscore):
  
     jret = []
     for r in newret:
-        page = IKBPage('/data/data/kbraw/data/%s' %r['kbnumber'])
+        page = KBPage(r['kbnumber'])
         j = dict()
-        j['url'] = 'http://kb.vmware.com/kb/%d' % r['kbnumber']
+        j['url'] = page.getUrl()
         j['kbnumber'] = r['kbnumber']
-        j['title'] = page.get_title()
+        j['title'] = page.getTitle()
         j['text'] = textmatched(r,page)
         j['rank'] = r['rank']
         jret.append(j)

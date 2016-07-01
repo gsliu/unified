@@ -1,13 +1,13 @@
 import sys
 import os
-import mysql.connector
-import MySQLdb
-from indexSearch import IndexSearch
-from symptom import Symptom
-from matcher import Matcher
-from indexLogs import IndexLogs
 import threading
-from filterResult import filterResult
+
+from lib.indexer.indexSearch import IndexSearch
+from lib.symptom import Symptom
+from lib.matcher.matcher import Matcher
+from lib.indexer.indexLogs import IndexLogs
+from lib.matcher.filterResult import filterResult
+
 
 isearch = IndexSearch()
 

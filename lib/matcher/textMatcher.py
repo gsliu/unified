@@ -1,18 +1,11 @@
 import sys
 import os
 import re
-import mysql.connector
-import MySQLdb
 
-from filterResult import filterResult
+from lib.matcher.filterResult import filterResult
 
-#import filterResult
-
-#print(sys.path)
-
-#from symptom import Symptom
-from matcher import Matcher
-from symptomHits import SymptomHits
+from lib.matcher.matcher import Matcher
+from lib.symptomHits import SymptomHits
 
 sh = SymptomHits()
 

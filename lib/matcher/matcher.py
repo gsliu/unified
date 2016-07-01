@@ -1,11 +1,8 @@
 import sys
 import os
-import mysql.connector
-import MySQLdb
-#from .. import symptom
 
-from  symptom import Symptom
-from dbConn import getQueryUnified
+from lib.symptom import Symptom
+from lib.dbConn import getQueryUnified
 
 
 
@@ -15,7 +12,7 @@ class Matcher:
        
 
     def loadSymptoms(self, minscore) :
-        sql = 'select kbnumber from log_symptom2 group by kbnumber having sum(score) > %2.8f' % minscore
+        sql = 'select kbnumber from log_symptom group by kbnumber having sum(score) > %2.8f' % minscore
         query = getQueryUnified()
         query.Query(sql)
 
