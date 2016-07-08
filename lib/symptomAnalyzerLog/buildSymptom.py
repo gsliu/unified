@@ -46,6 +46,7 @@ class Builder():
             count = 1
             while logdb.hasNext():
                 log = logdb.getNext()
+                print log
                 esraw = self.es.search(log['log'])
             
                 count = count + 1

@@ -14,7 +14,7 @@ class MLStripper(HTMLParser):
 
 
 class LogHTMLChecker:
-    def __init__(self, kbdir='/data/data/kbraw/data'):
+    def __init__(self, kbdir='/data/kbdata'):
         self.regs = []
         self.regs.append(re.compile(r'(<font[^>]+?Courier New*.+?<\/font>)'))
         self.regs.append(re.compile(r'(<span[^>].+?Courier New*.+?<\/span>)'))
@@ -41,6 +41,20 @@ class LogHTMLChecker:
                 for string in m1:
                     kblog = kblog + self.strip_tags(string)
         return kblog
+    def getLogCluster(self, kbnumber):
+        cluster = []
+        n = 0
+        text = self.readfile(kbnumber)
+        for reg in self.regs:
+            m1 = reg.findall(text)
+            if m1:
+                for string in m1:
+                    #kblog = kblog + self.strip_tags(string)
+                    cluster.append(self.strip_tags(string))
+        return cluster
+
+        
+        
     def check(self, kbnumber, log):
         
         try:
@@ -51,13 +65,13 @@ class LogHTMLChecker:
         return False
 
 if __name__ == '__main__':
-    lc = LogHTMLChecker('/data/data/kbraw/data')
+    lc = LogHTMLChecker()
     print lc.check(1037071, 'A general system error occured')
     print lc.check(1037071, ' B A general system error occured')
     print lc.check(1030267, 'A general system error occured')
-    print lc.check(1030267, 'write function failed')
+    print lc.getLogCluster(1030267)
     #print lc.getLog(1037071) 
     #print lc.getLog(1030267) 
-    print lc.getLog(2057902) 
+    print lc.getLogCluster(2057902) 
         
         

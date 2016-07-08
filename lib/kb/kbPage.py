@@ -6,6 +6,7 @@ import re
 import os
 from HTMLParser import HTMLParser
 from logCheckKBHtml import MLStripper
+import html2text
 class WebPage:
     
     ###########################################
@@ -15,6 +16,7 @@ class WebPage:
         self.url = url
         self.html = html
         self.doc = lxml.html.fromstring(self.html)
+        #print self.doc
         self.links = {}
 
     #######################################
@@ -84,6 +86,7 @@ class KBPage( WebPage ):
         self.symptoms_class_name = "cc_Symptoms"
         self.tags_class_name = "cc_Tags"
         self.body_els = self.doc.findall('./body/')
+        #print self.body_els
         
         if len(self.body_els) > 1:
             pass
@@ -97,7 +100,7 @@ class KBPage( WebPage ):
         if len(e) == 0:
             return ""
         else:
-            return e[0].text_content()
+            return e[0].text_content() + '\n'
         
     def getKbnumber(self):
         return self.kbnumber 
@@ -111,7 +114,12 @@ class KBPage( WebPage ):
             elif len(e) == 0:
                 continue
             else:
-                return e[0].text_content().strip()
+                html = lxml.html.tostring(e[0])
+                html = re.sub(r'<img[^>]*>', '', html)
+                text = html2text.html2text(html)
+                #print 'trimming.........'
+                #text = re.sub(r'base64,.*\n', '', text)
+                return text + '\n'
         return  ""
 
     def getSymptoms(self):
@@ -155,8 +163,16 @@ class KBPage( WebPage ):
  
     def getFullText(self):
         return self.getTitle() + self.getSymptoms() + self.getCause() + self.getPurpose() + self.getDetails() + self.getSolution() + self.getResolution()
+ 
+    def getIndexText(self):
+        text =  self.getTitle() + self.getSymptoms() + self.getCause() + self.getPurpose() + self.getDetails() + self.getSolution() + self.getResolution()
+        text = re.sub(r'[\n]+', '#u#u', text)
+        return text
+
 
 if __name__ == "__main__":
     kb = KBPage(2034627)
+    kb = KBPage(2119642)
+    kb = KBPage(2097684)
     print kb.getKbnumber()
     print kb.getFullText()

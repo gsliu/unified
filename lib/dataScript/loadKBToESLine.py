@@ -24,19 +24,19 @@ class KBESLoader:
         self.index = 'kb'
         self.doc_type = 'text'
         self.kb_dir = dir 
-    #    self.create_index()      
+        self.createIndex()      
     
     def createIndex(self): 
         # Create an index with settings and mapping, a line is a term
         #    1. add a new tokenizer which divide by /n
         #    2. add mappings to doc_type and field
         doc = {
-            'settings':{
-                'analysis':{
-                    'analyzer':{
-                        'whitespace':{
-                            'type':'pattern',
-                            'pattern':'\n'
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "line": {
+                            "type": "pattern",
+                            "pattern": "[\n]+",
                         }
                     }
                 }
@@ -44,64 +44,30 @@ class KBESLoader:
             'mappings':{
                 self.doc_type:{
                    'properties':{
-                                                              
-                        'title':{
+                        'text':{
                             'type':'string',
-                            'analyzer':'whitespace'
-                        },                                       
-			'symptoms':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'resolution':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'solution':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'purpose':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'cause':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-			'details':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-
-			'tags':{
-                            'type':'string',
-                            'analyzer':'whitespace'
-                        },
-
-
-
-
-                    } 
+                            'index': 'analyzed',
+                            'analyzer': 'line',
+                            'search_analyzer': 'line',
+                            #'analyzer':'line'
+                        },                                      
+                   } 
                 } 
             }
         }
-        res = self.es.indices.create(index = self.index, body = doc)
+        #delete index first
+        ret = self.es.indices.delete(index=self.index, ignore=[400, 404])
+        res = self.es.indices.create(index=self.index, body=doc)
         return res    
-
+        
     def indexItem(self, page):
 	doc = {
-            'url': page.getUrl(),
-            'summary': page.getTitle(),
-            'symptoms': page.getSymptoms(),
-            'resolution' : page.getResolution(),
-      	    'solution' : page.getSolution(),
-      	    'cause' : page.getCause(),
-       	    'purpose': page.getPurpose(),
-            'details': page.getDetails(),
-            'tags':page.getTags()
+            #'text':page.getIndexText()
+            'text':page.getFullText()
         }
+        #print doc
         res = self.es.index(index = self.index, doc_type = self.doc_type, id = page.getKbnumber(), body = doc)
+        #print res 
         return res['created']
 
     def indexAll(self):
@@ -128,5 +94,7 @@ if __name__ == "__main__":
     
     #loader = IKB_to_ES_Loader(sys.argv[1])
     loader = KBESLoader('/data/kbdata')
-
-    loader.indexAll()
+    page = KBPage(2051492)
+    page = KBPage(2097684)
+    loader.indexItem(page)
+    #loader.indexAll()

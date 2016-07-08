@@ -4,8 +4,8 @@ import os
 import sys
 import mimetypes
 import enchant
-import thread
 import MySQLdb
+from threading import Thread
 
 sys.path.append('.')
 
@@ -62,41 +62,37 @@ class ScanCodeClip():
             return False
  
     def process(self, log):
-        #p = re.compile("(%[^-\s]+)|%")
+        #strip the log
         #print log
-        #ignore include
-        postfix = re.compile(r'\.(?:h|c|cpp|java|cs)$')
-        m = postfix.findall(log) 
-        if m:
-            return
+        log = log.strip(' \t\n\r')
+        log = re.sub(r'\\n', '', log)
+        #print log 
+        #escape the regex sympbol
+        log = re.escape(log)
+        #print log
+        #replace % with .*
+        log = re.sub("(%[^-\s]+)|%$|'", '.*', log)
+        #log = re.sub(r'\\[^-\s]', '', log)
+        #log = re.sub(r'\\', '', log)
+        while log.startswith( '.*' ):
+            log = log[2:]
+            log = log.strip(' \t\n\r')
+        while log.endswith( '.*' ):
+            log = log[0:-2]
+            log = log.strip(' \t\n\r')
+        log = '.*' + log + '.*'
 
-        p = re.compile("(%[^-\s]+)|%$|'")
-        splog = p.split(log)
-        for slog in splog:
-            if slog is None:
-                continue
-            #remove \n \t...
-            slog = re.sub(r'\\[^-\s]', '', slog)
-	    #remove \
-            slog = re.sub(r'\\', '', slog)
-            #remove # 
-            log = re.sub(r'%', '', log)
+        log = MySQLdb.escape_string(log)
+
+        if log and self.isqualified(log):
+            #print ('***' + slog)
+            self.savelog(log)
    
-
-            #escape the '"
-            slog = MySQLdb.escape_string(slog)
-
-            if slog and self.isqualified(slog):
-                #strip the log
-                log = log.strip()
-                #print ('***' + slog)
-                self.savelog(slog)
-       
 
 
    
     def readandfindlog(self, filename):
-        #f = open('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmx/main/main.c', 'r')
+        #f = open('/data/gengshengl/src/vsphere60p03/bora/vmx/main/main.c', 'r')
         f = open(filename, 'r')
         line = f.read();
 
@@ -110,7 +106,7 @@ class ScanCodeClip():
 
     def issourcecode(self, filename):
         #postfix = re.compile(r'"\.(h|c|cpp|java|cs)$"')
-        postfix = re.compile(r'\.(?:h|c|cpp|java|cs)$')
+        postfix = re.compile(r'\.(?:h|c|cpp|java|cc|hpp|cs)$')
         m = postfix.findall(filename) 
         if m:
             return True
@@ -130,37 +126,36 @@ class ScanCodeClip():
                     print('processting file=============>>>> ' + filename)
                     self.readandfindlog(filename)
 
-    def closeDb(self): 
-        self.cnx.commit()
-        self.cnx.close()
-if __name__ == '__main__':
-    #runset = sys.argv[1].split(';')
-    #loaddir("/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmx")  
-
-    runset = []
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmx')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/apps')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/lib')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmkernel')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/modules')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/devices')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/mks')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/cim')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vim')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vpx')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/public')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/ui')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora-soft')
-    #runset.append('/mnt/dbc/gengshengl/src/vsphere60p03/bora/vmcore')
-    runset.append('/data/src/gengshengl/src/vsphere60p03')
-    #runset.append('/mnt/dbc/gengshengl/src/view623/mojo/')
-
+def scanAll(runset):
     sccs = []  
     for s in runset:
         sccs.append(ScanCodeClip(s, 'logclip'))
 
+    threads = []
     for scc in sccs:
         print 'starting new ....'
-        thread.start_new_thread(scc.run,())
-    while True:
-        pass
+        t = Thread(target=scc.run, args=())
+        t.start()
+        threads.append(t)
+        #thread.start_new_thread(scc.run,())
+    # join all threads
+    for t in threads:
+        t.join()
+
+    print 'Done scaning the code'
+
+if __name__ == '__main__':
+    #runset = sys.argv[1].split(';')
+    #loaddir("/data/gengshengl/src/vsphere60p03/bora/vmx")  
+
+    runset = []
+    #runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmx')
+    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/apps')
+    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/lib')
+    #runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmkernel')
+    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/modules')
+    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/devices')
+    #runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmx/main/')
+    #runset.append('/data/src/gengshengl/src/view623/mojo/')
+    scanAll(runset)
+
