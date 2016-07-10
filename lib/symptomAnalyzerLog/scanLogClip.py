@@ -63,17 +63,25 @@ class ScanCodeClip():
  
     def process(self, log):
         #strip the log
-        #print log
+        print log
+        #first we chagne all the %s, %d into a special string CpDAlLStAr
+        log = re.sub("(\\%[^-\s]+)|%$|'", 'CpDAlLStAr', log)
+        
+        #strp log
         log = log.strip(' \t\n\r')
         log = re.sub(r'\\n', '', log)
+        log = re.sub(r'\\t', '', log)
+        log = re.sub(r'\\r', '', log)
+
         #print log 
         #escape the regex sympbol
         log = re.escape(log)
-        #print log
-        #replace % with .*
-        log = re.sub("(%[^-\s]+)|%$|'", '.*', log)
+        print log
+
+        #replace CpDAlLStAr with .*
+        log = re.sub("CpDAlLStAr", '.*', log)
         #log = re.sub(r'\\[^-\s]', '', log)
-        #log = re.sub(r'\\', '', log)
+
         while log.startswith( '.*' ):
             log = log[2:]
             log = log.strip(' \t\n\r')
@@ -81,6 +89,7 @@ class ScanCodeClip():
             log = log[0:-2]
             log = log.strip(' \t\n\r')
         log = '.*' + log + '.*'
+        print log
 
         log = MySQLdb.escape_string(log)
 

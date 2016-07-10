@@ -29,11 +29,11 @@ class MysqlLogClip:
     def getTable(self):
         return self.table
     
-    def updateScore(self, log):
-        sql = ('UPDATE %s SET `score`=%2.8f WHERE log = "%s"') % (self.table, log['score'], log['log'])
-	print sql
-        query = getQueryUnified()
-        query.Query(sql)
+#    def updateScore(self, log):
+#        sql = ('UPDATE %s SET `score`=%2.8f WHERE log = "%s"') % (self.table, log['score'], log['log'])
+#	print sql
+#        query = getQueryUnified()
+#        query.Query(sql)
 
 
 

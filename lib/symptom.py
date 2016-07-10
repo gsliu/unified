@@ -8,26 +8,28 @@ from dbConn import getQueryUnified
 class Symptom:
     def __init__(self, kb):
 
-        sql = 'SELECT * FROM `symptom` where kbnumber = ' +  str(kb)
-        query = getQueryUnified()
-        query.Query(sql)
-        data = query.record
+        #sql = 'SELECT * FROM `symptom` where kbnumber = ' +  str(kb)
+        #query = getQueryUnified()
+        #query.Query(sql)
+        #data = query.record
 
 
         self.kbnumber = kb
         self.logs = []
         self.keywords = []
-        if data:
-            self.new = 0
-            self.loadLog()
-            self.loadKeyword()
-        else:
-            self.new = 1
-            self.logcount = 0
-            self.symptomscore = 0
+        self.loadLog()
+        self.loadKeyword()
+        #if data:
+        #    self.new = 0
+        #    self.loadLog()
+        #    self.loadKeyword()
+        #else:
+        #    self.new = 1
+        #    self.logcount = 0
+        #    self.symptomscore = 0
     
     def loadLog(self):
-        sql = 'SELECT * FROM `log_symptom` where kbnumber = ' +  str(self.kbnumber)
+        sql = 'SELECT * FROM `symptom_log` where kbnumber = ' +  str(self.kbnumber)
         query = getQueryUnified()
         query.Query(sql)
         data = query.record
@@ -38,7 +40,7 @@ class Symptom:
            self.logs.append({'log':row['log'], 'score':float(row['score'])})
 
     def loadKeyword(self):
-        sql = 'SELECT * FROM `keyword2_symptom` where kbnumber = ' +  str(self.kbnumber)
+        sql = 'SELECT * FROM `symptom_keyword` where kbnumber = ' +  str(self.kbnumber)
         query = getQueryUnified()
         query.Query(sql)
         data = query.record
@@ -50,7 +52,7 @@ class Symptom:
      
     def addLog(self, log):
         #print log
-        sql = 'INSERT INTO `log_symptom` (`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
+        sql = 'INSERT INTO `symptom_log` (`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
         print sql
         query = getQueryUnified()
         query.Query(sql)
@@ -129,7 +131,7 @@ class Symptom:
                 self.updateLog(l)
 
     def updateLog(self, log):
-        sql = 'UPDATE `log_symptom2` SET `score`= %2.8f WHERE kbnumber = "%s" and log = "%s"' % ( log['score'], self.kbnumber, log['log'])
+        sql = 'UPDATE `symptom_log` SET `score`= %2.8f WHERE kbnumber = "%s" and log = "%s"' % ( log['score'], self.kbnumber, log['log'])
         query = getQueryUnified()
         query.Query(sql)
         
@@ -138,7 +140,7 @@ class Symptom:
 
     def deleteLog(self, log):
    
-        sql = 'delete from log_symptom2 where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
+        sql = 'delete from symptom_log2 where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
         query = getQueryUnified()
         query.Query(sql)
         
@@ -147,13 +149,13 @@ class Symptom:
         self.symptomscore = self.symptomscore - log['score']  
 
         self.logcount = len(logs)
-        self.save()
+        #self.save()
 
     def save(self):
         if self.new == 1:
-            sql = 'INSERT INTO `symptom`(`kbnumber`, `symptomscore`, `logcount` ) VALUES (%d, %2.8f , %d)' % ( self.kbnumber, self.symptomscore, self.logcount)
+            sql = 'INSERT INTO `symptom`(`kbnumber`) VALUES (%d)' % ( self.kbnumber)
         else:
-            sql = 'UPDATE symptom SET `kbnumber`= "%d",`symptomscore`=%2.8f, `logcount` = %d WHERE `kbnumber`=%d ' % (self.kbnumber, self.symptomscore, self.logcount, self.kbnumber)
+            sql = 'UPDATE symptom SET `kbnumber`= "%d" WHERE `kbnumber`=%d ' % (self.kbnumber, self.kbnumber)
         query = getQueryUnified()
         query.Query(sql)
         
@@ -164,6 +166,7 @@ class Symptom:
 
 if __name__ == "__main__":
     s = Symptom(1017910)
+    s = Symptom(2035011)
 
     #log1 = {'log':'test log', 'score':float(0.123)}
     #s.addLog(log1)
@@ -177,6 +180,6 @@ if __name__ == "__main__":
     #log['score'] = 0.3
     #print s.hasLog(log)
     #s.updateIncreaseLog(log)
-    #print s.getLogs()
+    print s.getLogs()
     print s.getKeywords()
     print s.getKeywordsDemo()

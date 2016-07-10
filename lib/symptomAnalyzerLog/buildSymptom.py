@@ -30,7 +30,6 @@ class Builder():
                 log['score'] = 1.0 / total
             else:
                 log['score'] = 0.0
-            logdb.updateScore(log)
 
             #20 hits mean this log clip is too common
             if total > 20:

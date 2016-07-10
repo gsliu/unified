@@ -13,7 +13,7 @@ class MLStripper(HTMLParser):
         return ''.join(self.fed)
 
 
-class LogHTMLChecker:
+class KBLog:
     def __init__(self, kbdir='/data/kbdata'):
         self.regs = []
         self.regs.append(re.compile(r'(<font[^>]+?Courier New*.+?<\/font>)'))
@@ -65,7 +65,7 @@ class LogHTMLChecker:
         return False
 
 if __name__ == '__main__':
-    lc = LogHTMLChecker()
+    lc = KBLog()
     print lc.check(1037071, 'A general system error occured')
     print lc.check(1037071, ' B A general system error occured')
     print lc.check(1030267, 'A general system error occured')

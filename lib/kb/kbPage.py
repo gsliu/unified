@@ -5,7 +5,6 @@ import urlparse
 import re
 import os
 from HTMLParser import HTMLParser
-from logCheckKBHtml import MLStripper
 import html2text
 class WebPage:
     

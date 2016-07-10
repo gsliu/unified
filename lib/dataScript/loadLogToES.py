@@ -5,7 +5,7 @@ from elasticsearch import Elasticsearch
 from webpage import IKBPage
 from os import listdir
 from os.path import isfile, join
-from logCheckKBHtml import LogHTMLChecker
+#from logCheckKBHtml import LogHTMLChecker
 
 class IKB_to_ES_Loader:
 
