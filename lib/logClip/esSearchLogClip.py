@@ -17,16 +17,17 @@ class ESSearchLogClip:
 
         
     def search(self, log):
-        #res = self.es.search(index='kb', q='"' + log + '"', size=30) 
+        res = self.es.search(index='kb', q='" ' + log + ' "', size=30) 
         #res = self.es.search(index='kb', q=log, size=30) 
-        res = self.es.search(index="kb",  body={"query":{ "regexp": {"text": log }}}, size=30)
+        #res = self.es.search(index="kb",  body={"query":{ "regexp": {"text": log }}}, size=30)
         return res
         #return self.parseResult(ret)
 
 if __name__ == '__main__':
     eslog = ESSearchLogClip()
     kbs = eslog.search('and try again.')    
-    kbs = eslog.search(".*snapshot.*")    
-    kbs = eslog.search(".*.* artificial lock failure induced on .*.*")    
-    kbs = eslog.search(".* Invalid .* value \(.* using .*")    
+    kbs = eslog.search('<?xml version=\\')    
+    #kbs = eslog.search(".*snapshot.*")    
+    #kbs = eslog.search(".*.* artificial lock failure induced on .*.*")    
+    #kbs = eslog.search(".* Invalid .* value \(.* using .*")    
     print eslog.parseResult(kbs)

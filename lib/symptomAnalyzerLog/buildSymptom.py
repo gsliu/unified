@@ -1,69 +1,70 @@
 import sys
+import os
+import MySQLdb
 import re
-from esSearchLogClip import ESSearchLogClip 
-from mysqlLogClip import MysqlLogClip 
-sys.path.append(".")
 
-from lib.symptom import Symptom 
+sys.path.append('.')
 
-reload(sys);
-sys.setdefaultencoding("utf8")
+from lib.symptom import Symptom
+from lib.dbConn import getQueryUnified
+from lib.kb.kbLog import KBLog
 
 
 
-class Builder():
+class BuildSymptom:
     def __init__(self):
-        self.es = ESSearchLogClip()
-        self.logdbs = []
+        self.symptoms = self.loadRawSymptoms()
+        self.kl = KBLog()
+       
 
-    def addLogTable(self, table):
-        self.logdbs.append(MysqlLogClip(table))
+    def loadRawSymptoms(self) :
+        sql = 'select DISTINCT kbnumber from symptom_log'
+        query = getQueryUnified()
+        query.Query(sql)
+        
 
-    def parseResult(self, esraw, log, logdb):
-        #drop this logclip if too many matches
-        kbs = []
-        if 'hits' in esraw:
-            total = int(esraw['hits']['total'])
-              
-            #update score of lop clip
-            if total > 0:
-                log['score'] = 1.0 / total
-            else:
-                log['score'] = 0.0
+        s = []
+        i = 0
+        for row in query.record:
+            i = i + 1
+            print ' %d  loading symptom %s ...' % (i, row['kbnumber'])
+            t = Symptom(row['kbnumber'])
+            #print t.getLogs()
+            s.append(t)
+        return s
 
-            #20 hits mean this log clip is too common
-            if total > 20:
-                return kbs
- 
-            for hit in esraw['hits']['hits']:
-                kbs.append(int(hit['_id']))
-        return kbs
+    def analyzeCluster(self, s):
+        #all the log clip in symptom
+        print s.getLogs()
+        for log in s.getLogs():
+            #cn is the cluster number
+            cn = -1
+            cf = True
+            for c in self.kl.getLogCluster(s.getKbnumber()):
+                cn = cn + 1
+                print log['log']
+                lr = re.compile(re.escape(log['log']))
+                #if this log clip is found in cluster
+                if lr.search(c):
+                    s.saveCluster(log, cn)
+                    cf = False
+            if cf:
+                #if this log does not belongs to any cluster, just put it to -1 cluster
+                s.saveCluster(log, -1)
 
-     
+
     def process(self):
-        for logdb in self.logdbs:
-            count = 1
-            while logdb.hasNext():
-                log = logdb.getNext()
-                print log
-                esraw = self.es.search(log['log'])
+        print 'start processing log cluster'
+        loop = 0
+        for s in self.symptoms:
+            loop = loop + 1
+            print '%d   processing... %s' % (loop, s.getKbnumber())
+            self.analyzeCluster(s)
             
-                count = count + 1
-                #print("Log %d =======>%s") % (count, log['log'])
-                print("%s: %d =======>%s") % (logdb.getTable(), count, log['log'])
-            
-                result = self.parseResult(esraw, log, logdb)
+        
 
-                for kbnumber in result:
-                    print("   updating sym %d") % kbnumber
-                    sym = Symptom(kbnumber)
-                    if sym.hasLog(log):
-                        sym.updateIncreaseLog(log)
-                    else:
-                        sym.addLog(log)
 
 if __name__ == '__main__':
-    builder = Builder()
-    #builder.addLogTable('logclip_view')
-    builder.addLogTable('logclip')
-    builder.process()
+    lc = BuildSymptom()
+    lc.process()
+  

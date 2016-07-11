@@ -2,9 +2,11 @@ import sys
 import argparse
 
 sys.path.append('.')
-from lib.symptomAnalyzerLog.scanLogClip import scanAll
-from lib.symptomAnalyzerLog.buildSymptom import Builder
-from lib.dataScript.loadKBToESLine import KBESLoader
+from lib.logClip.scanLogClip import scanAll
+from lib.symptomAnalyzerLog.buildSymptom import BuildSymptom
+from lib.symptomAnalyzerLog.initSymptom import InitSymptom
+from lib.dataScript.loadKBToES import KBESLoader
+from lib.logClip.scanFunction import ScanFunction
 
 
 def scanCode(args):
@@ -12,7 +14,7 @@ def scanCode(args):
     #loaddir("/data/gengshengl/src/vsphere60p03/bora/vmx")  
 
     runset = []
-    #runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmx')
+    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmx')
     #runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmx')
     runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmcore')
     runset.append('/data/src/gengshengl/src/vsphere60p03/bora/apps')
@@ -20,8 +22,12 @@ def scanCode(args):
     runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmkernel')
     runset.append('/data/src/gengshengl/src/vsphere60p03/bora/modules')
     runset.append('/data/src/gengshengl/src/vsphere60p03/bora/devices')
-    #runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vim')
-    #runset.append('/data/src/gengshengl/src/view623/mojo/')
+    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vim')
+    runset.append('/data/src/gengshengl/src/view623/mojo/')
+    for srcdir in runset:
+         sf = ScanFunction(srcdir)
+         sf.process()
+      
     scanAll(runset)
 
 def loadKB(args):
@@ -32,11 +38,13 @@ def loadKB(args):
 
 
 def buildSymptom(args):
-    builder = Builder()
-    #builder.addLogTable('logclip_view')
-    builder.addLogTable('logclip')
-    builder.process()
+    bs = BuildSymptom()
+    bs.process()
 
+def initSymptom(args):
+    ini = InitSymptom()
+    ini.addLogTable('logclip')
+    ini.process()
 
 
 parser = argparse.ArgumentParser()
@@ -58,9 +66,15 @@ load_parser.set_defaults(func=loadKB)
 
 
 # build symptom command
-build_parser = subparsers.add_parser('build', help='build symptom from log clips')
+build_parser = subparsers.add_parser('init', help='init symptom')
+#delete_parser.add_argument('dirname', action='store', help='The directory to remove')
+build_parser.set_defaults(func=initSymptom) 
+
+# analyze log cluster
+build_parser = subparsers.add_parser('build', help='analyze log cluster')
 #delete_parser.add_argument('dirname', action='store', help='The directory to remove')
 build_parser.set_defaults(func=buildSymptom) 
+
 
 
 args = parser.parse_args()

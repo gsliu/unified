@@ -1,5 +1,7 @@
 import re
 import random
+import MySQLdb
+
 from dbConn import getQueryUnified
 
 
@@ -29,7 +31,7 @@ class Symptom:
         #    self.symptomscore = 0
     
     def loadLog(self):
-        sql = 'SELECT * FROM `symptom_log` where kbnumber = ' +  str(self.kbnumber)
+        sql = 'SELECT * FROM `symptom_log` where kbnumber = "%s"' % self.kbnumber
         query = getQueryUnified()
         query.Query(sql)
         data = query.record
@@ -40,7 +42,7 @@ class Symptom:
            self.logs.append({'log':row['log'], 'score':float(row['score'])})
 
     def loadKeyword(self):
-        sql = 'SELECT * FROM `symptom_keyword` where kbnumber = ' +  str(self.kbnumber)
+        sql = 'SELECT * FROM `symptom_keyword` where kbnumber = "%s"' % self.kbnumber
         query = getQueryUnified()
         query.Query(sql)
         data = query.record
@@ -52,7 +54,7 @@ class Symptom:
      
     def addLog(self, log):
         #print log
-        sql = 'INSERT INTO `symptom_log` (`kbnumber`, `log`, `score` ) VALUES (%d, "%s" , %2.8f)' % ( self.kbnumber, log['log'], log['score'])
+        sql = 'INSERT INTO `symptom_log` (`kbnumber`, `log`, `score` ) VALUES ("%s", "%s" , %2.8f)' % ( self.kbnumber, MySQLdb.escape_string(log['log']), log['score'])
         print sql
         query = getQueryUnified()
         query.Query(sql)
@@ -130,43 +132,33 @@ class Symptom:
                 l['score'] = l['score'] - log['score']
                 self.updateLog(l)
 
-    def updateLog(self, log):
-        sql = 'UPDATE `symptom_log` SET `score`= %2.8f WHERE kbnumber = "%s" and log = "%s"' % ( log['score'], self.kbnumber, log['log'])
+    #mark a log as scan when it's scaned
+    def markLog(self, log):
+        sql = 'UPDATE `symptom_log` SET `scan`= 1 WHERE kbnumber = "%s" and log = "%s"' % ( self.getKbnumber(), log['log'])
         query = getQueryUnified()
         query.Query(sql)
-        
-        
 
+    def saveCluster(self, log, cn): 
+        sql = 'INSERT INTO `symptom_log_cluster`(`kbnumber`, `log`, `cluster`, `score`) VALUES ("%s", "%s", %d, %2.8f)' % (self.getKbnumber(), MySQLdb.escape_string(log['log']), cn, log['score']) 
+        print sql 
+        query = getQueryUnified() 
+        query.Query(sql) 
 
-    def deleteLog(self, log):
-   
-        sql = 'delete from symptom_log2 where kbnumber = %d and log = "%s"' % ( self.kbnumber, log['log'])
+    def loadCluster(self):
+        sql = 'SELECT log, score, cluster FROM `symptom_log_cluster` WHERE kbnumber = "%s"' %  self.kbnumber
         query = getQueryUnified()
         query.Query(sql)
-        
-     
-        self.logcount = self.logcount - 1
-        self.symptomscore = self.symptomscore - log['score']  
+        data = query.record
+        print data
 
-        self.logcount = len(logs)
-        #self.save()
-
-    def save(self):
-        if self.new == 1:
-            sql = 'INSERT INTO `symptom`(`kbnumber`) VALUES (%d)' % ( self.kbnumber)
-        else:
-            sql = 'UPDATE symptom SET `kbnumber`= "%d" WHERE `kbnumber`=%d ' % (self.kbnumber, self.kbnumber)
-        query = getQueryUnified()
-        query.Query(sql)
-        
-             
 
 
 
 
 if __name__ == "__main__":
-    s = Symptom(1017910)
-    s = Symptom(2035011)
+    s = Symptom("1017910")
+    s = Symptom("2035011")
+    s = Symptom("219")
 
     #log1 = {'log':'test log', 'score':float(0.123)}
     #s.addLog(log1)
@@ -183,3 +175,4 @@ if __name__ == "__main__":
     print s.getLogs()
     print s.getKeywords()
     print s.getKeywordsDemo()
+    print s.loadCluster()

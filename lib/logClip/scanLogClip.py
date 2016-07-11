@@ -9,96 +9,26 @@ from threading import Thread
 
 sys.path.append('.')
 
-from istext import istext 
+#from istext import istext 
 from lib.dbConn import getQueryUnified
+from lib.logClip.logClip import LogClip
 
 class ScanCodeClip():
- 
-    def initDb(self):
-        reload(sys)
-        sys.setdefaultencoding('utf-8')
-        self.dictus = enchant.Dict("en_US")
-        self.dictgb = enchant.Dict("en_GB")
-
     def __init__(self, dirname, table):
         self.dirname = dirname
-        self.initDb()
-        self.table = table
+        self.lc = LogClip(table)
 
-    def savelog(self, log):
-        sql = ("select * from %s where log = \"%s\" ")  % (self.table, log)
-        query = getQueryUnified()
-        query.Query(sql)
-        data = query.record
-
-        if len(data) > 0:
-            print 'ignore ---->%s' % log
-            return
-   
-        sql = ("INSERT INTO %s (log) VALUES ( \"%s\" )")  % (self.table, log)
-        query = getQueryUnified()
-        query.Query(sql)
-   
-        print("insert----> %s") % log
-   
-
-    def isqualified(self, log):
-        #if no charactor in the log drop it.
-        try:
-            cre = re.compile(r'[a-zA-Z]')
-            if cre.search(log) is None:
-                return False
-
-            #check length
-            if len(log) < 10:
-                return False
-
-            #dict check
-    
-            if self.dictus.check(log) or self.dictgb.check(log):
-                return False
-            return True
-        except:
-            return False
- 
     def process(self, log):
-        #strip the log
-        print log
-        #first we chagne all the %s, %d into a special string CpDAlLStAr
-        log = re.sub("(\\%[^-\s]+)|%$|'", 'CpDAlLStAr', log)
-        
-        #strp log
-        log = log.strip(' \t\n\r')
-        log = re.sub(r'\\n', '', log)
-        log = re.sub(r'\\t', '', log)
-        log = re.sub(r'\\r', '', log)
-
-        #print log 
-        #escape the regex sympbol
-        log = re.escape(log)
-        print log
-
-        #replace CpDAlLStAr with .*
-        log = re.sub("CpDAlLStAr", '.*', log)
-        #log = re.sub(r'\\[^-\s]', '', log)
-
-        while log.startswith( '.*' ):
-            log = log[2:]
-            log = log.strip(' \t\n\r')
-        while log.endswith( '.*' ):
-            log = log[0:-2]
-            log = log.strip(' \t\n\r')
-        log = '.*' + log + '.*'
-        print log
-
-        log = MySQLdb.escape_string(log)
-
-        if log and self.isqualified(log):
-            #print ('***' + slog)
-            self.savelog(log)
+        #to lower case
+        log = log.lower()
    
-
-
+        print 'found log ---> %s' % log
+        p = re.compile("(%[^-\s]+)|%$|'")
+        splog = p.split(log)
+        for slog in splog:
+            if slog is None or '%' in slog:
+                continue
+            self.lc.saveLog(slog)
    
     def readandfindlog(self, filename):
         #f = open('/data/gengshengl/src/vsphere60p03/bora/vmx/main/main.c', 'r')
@@ -122,7 +52,7 @@ class ScanCodeClip():
         return False
 
     def run(self):
-        print "processing.. %s" % self.dirname
+        print "Src processing -----> %s" % self.dirname
         for root, dirs, files in os.walk(self.dirname):
             path = root.split('/')
             #print((len(path) - 1) * '---', os.path.basename(root))
@@ -132,7 +62,7 @@ class ScanCodeClip():
                 # print filename
                 if self.issourcecode(file):
                 #if istext(filename) and issourcecode(filename):
-                    print('processting file=============>>>> ' + filename)
+                    print('processting file--------->' + filename)
                     self.readandfindlog(filename)
 
 def scanAll(runset):

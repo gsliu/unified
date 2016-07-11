@@ -7,7 +7,7 @@ from lib.dbConn import getQueryUnified
 class MysqlLogClip:
     def __init__(self, table):
         self.table = table
-        sql = 'SELECT log, score FROM %s ' % self.table
+        sql = 'SELECT log FROM %s where scan = 0' % self.table
         query = getQueryUnified()
         query.Query(sql)
         self.data = query.record
@@ -18,7 +18,7 @@ class MysqlLogClip:
         if self.i < len(self.data):
             row = self.data[self.i]
             self.i = self.i + 1
-            return {'log':row['log'], 'score':row['score']}
+            return {'log':row['log'], 'score': float(0.0)}
 
         return None
 
