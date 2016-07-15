@@ -13,7 +13,7 @@ sys.path.append('.')
 from lib.dbConn import getQueryUnified
 from lib.logClip.logClip import LogClip
 
-class ScanCodeClip():
+class ScanString():
     def __init__(self, dirname, table):
         self.dirname = dirname
         self.lc = LogClip(table)
@@ -21,17 +21,19 @@ class ScanCodeClip():
     def process(self, log):
         #to lower case
         log = log.lower()
+         
+        #remove \n 
+        log = re.sub('\\n', '', log)
    
-        print 'found log ---> %s' % log
-        p = re.compile("(%[^-\s]+)|%$|'")
+        print 'Found log -----> %s' % log
+        #p = re.compile(r'[^-\s]{0,}%[^-\s]{0,}|\|\n|\t|\r')
+        p = re.compile(r'\\[^-\s]{0,}|[^-\s]{0,}%[^-\s]{0,}')
         splog = p.split(log)
         for slog in splog:
-            if slog is None or '%' in slog:
-                continue
-            self.lc.saveLog(slog)
+            if slog:
+                self.lc.saveLog(slog)
    
     def readandfindlog(self, filename):
-        #f = open('/data/gengshengl/src/vsphere60p03/bora/vmx/main/main.c', 'r')
         f = open(filename, 'r')
         line = f.read();
 
@@ -68,7 +70,7 @@ class ScanCodeClip():
 def scanAll(runset):
     sccs = []  
     for s in runset:
-        sccs.append(ScanCodeClip(s, 'logclip'))
+        sccs.append(ScanString(s, 'logclip'))
 
     threads = []
     for scc in sccs:

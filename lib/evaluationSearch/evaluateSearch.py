@@ -3,28 +3,16 @@ from elasticsearch import Elasticsearch
 from os import listdir
 from os.path import isfile, join
 import sys
-import mysql
-import MySQLdb
 sys.path.append('..')
 print sys.path
-from dataScripts.bz.db_bz import get_bz_con
-from common.textMatcher import TextMatcher
+from dbConn import getQueryBugzilla
+from lib.matcher.textMatcher import TextMatcher
 from threading import Thread
 import config
 
 textMatcher = TextMatcher()
 
 class EvaluateSearch:
-
-##############################################################################
-# VMBugzilla Database structure: 
-#    bugid(0), title(9), text(11) (essential part for full text search)
-#       opened(1), severity(2), priority(3), status(4), assignee(5), reporter(6),
-#       category(7), component(8), fixby(10)(for result display)
-#   fields name is es:
-#       summary, text       
-##############################################################################
-
     def __init__(self):
         self.es = Elasticsearch()
         self.index = 'bugzilla'

@@ -21,6 +21,7 @@ class Symptom:
         self.keywords = []
         self.loadLog()
         self.loadKeyword()
+        self.loadCluster()
         #if data:
         #    self.new = 0
         #    self.loadLog()
@@ -144,12 +145,26 @@ class Symptom:
         query = getQueryUnified() 
         query.Query(sql) 
 
+    def getCluster(self):
+        return self.cluster
+
     def loadCluster(self):
         sql = 'SELECT log, score, cluster FROM `symptom_log_cluster` WHERE kbnumber = "%s"' %  self.kbnumber
         query = getQueryUnified()
         query.Query(sql)
         data = query.record
-        print data
+        #print data
+        self.cluster = []
+        for rawCluster in data:
+            f = True
+            for c in self.cluster:
+                if c['cluster'] == rawCluster['cluster']:
+                    f = False
+                    c['logs'].append({'log':rawCluster['log'], 'score':rawCluster['score']})
+            tc = {'cluster':rawCluster['cluster'], 'logs':[]}
+            tc['logs'].append({'log':rawCluster['log'], 'score':rawCluster['score']})
+            self.cluster.append(tc)
+        #print self.cluster  
 
 
 
@@ -158,7 +173,7 @@ class Symptom:
 if __name__ == "__main__":
     s = Symptom("1017910")
     s = Symptom("2035011")
-    s = Symptom("219")
+    s = Symptom("1000513")
 
     #log1 = {'log':'test log', 'score':float(0.123)}
     #s.addLog(log1)
@@ -172,7 +187,7 @@ if __name__ == "__main__":
     #log['score'] = 0.3
     #print s.hasLog(log)
     #s.updateIncreaseLog(log)
-    print s.getLogs()
-    print s.getKeywords()
-    print s.getKeywordsDemo()
+    #print s.getLogs()
+    #print s.getKeywords()
+    #print s.getKeywordsDemo()
     print s.loadCluster()

@@ -9,7 +9,7 @@ import decimal
 sys.path.append('.')
 from lib.indexer.indexLogs import IndexLogs
 from lib.matcher.textMatcher import TextMatcher
-from lib.matcher.indexMatcher import IndexMatcher
+#from lib.matcher.indexMatcher import IndexMatcher
 
 from lib.symptom import Symptom
 from lib.symptomHits import SymptomHits
@@ -28,9 +28,9 @@ class ComplexEncoder(json.JSONEncoder):
 
 
 #init matcher....this may take long time.
-textMatcher = TextMatcher()
+textMatcher = TextMatcher(0.0)
 sh = SymptomHits()
-indexMatcher = IndexMatcher()
+#indexMatcher = IndexMatcher()
     
 
 #dispatch text

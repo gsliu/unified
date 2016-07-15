@@ -49,11 +49,10 @@ class LogClip():
                 return False
 
             #check length
-            if len(log) < 10:
+            if len(log) < 8:
                 return False
 
             #dict check
-    
             if self.dictus.check(log) or self.dictgb.check(log):
                 return False
             return True
@@ -66,20 +65,20 @@ class LogClip():
         log = log.lower()
        
         #trim special char in front and at the end of log
-        cset = []
-        for c in xrange(ord('a'), ord('z')+1):
-            cset.append(chr(c))
+        #cset = []
+        #for c in xrange(ord('a'), ord('z')+1):
+        #    cset.append(chr(c))
         #some function is named as ___xxxx
-        cset.append('_')
+        #cset.append('_')
 
-        while log and log[0] not in cset:
-            log = log[1:]
+        #while log and log[0] not in cset:
+        #    log = log[1:]
 
-        while log and log[-1] not in cset:
-            log = log[:-1]
+        #while log and log[-1] not in cset:
+        #    log = log[:-1]
 
         #insert the log
-        if log:
+        if log and self.isqualified(log):
             log = MySQLdb.escape_string(log)
             self.insertLog(log)
 

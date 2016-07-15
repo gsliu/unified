@@ -44,12 +44,14 @@ class InitSymptom():
         for logdb in self.logdbs:
             count = 1
             while logdb.hasNext():
+                #fetech next log
                 log = logdb.getNext()
-                print log
+                #mark this log as scaned
+                logdb.updateScan(log)
+                
+                #search this log in es
                 esraw = self.es.search(log['log'])
-            
                 count = count + 1
-                #print("Log %d =======>%s") % (count, log['log'])
                 print("%s: %d =======>%s") % (logdb.getTable(), count, log['log'])
             
                 result = self.parseResult(esraw, log, logdb)

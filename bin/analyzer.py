@@ -2,7 +2,7 @@ import sys
 import argparse
 
 sys.path.append('.')
-from lib.logClip.scanLogClip import scanAll
+from lib.logClip.scanString import scanAll
 from lib.symptomAnalyzerLog.buildSymptom import BuildSymptom
 from lib.symptomAnalyzerLog.initSymptom import InitSymptom
 from lib.dataScript.loadKBToES import KBESLoader
@@ -14,16 +14,10 @@ def scanCode(args):
     #loaddir("/data/gengshengl/src/vsphere60p03/bora/vmx")  
 
     runset = []
-    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmx')
-    #runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmx')
-    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmcore')
-    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/apps')
-    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/lib')
-    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vmkernel')
-    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/modules')
-    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/devices')
-    runset.append('/data/src/gengshengl/src/vsphere60p03/bora/vim')
-    runset.append('/data/src/gengshengl/src/view623/mojo/')
+    runset.append('/data/srcdir/vsphere60p03/bora/')
+    runset.append('/data/srcdir/vsphere60p03/vmkdrivers')
+    runset.append('/data/srcdir/vsphere60p03/bora-vmsoft/')
+    #runset.append('/data/srcdir/vsphere60p03/bora/')
     for srcdir in runset:
          sf = ScanFunction(srcdir)
          sf.process()

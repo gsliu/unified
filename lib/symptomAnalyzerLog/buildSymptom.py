@@ -35,14 +35,15 @@ class BuildSymptom:
 
     def analyzeCluster(self, s):
         #all the log clip in symptom
-        print s.getLogs()
+        #print s.getLogs()
         for log in s.getLogs():
             #cn is the cluster number
             cn = -1
             cf = True
             for c in self.kl.getLogCluster(s.getKbnumber()):
                 cn = cn + 1
-                print log['log']
+                #print log['log']
+                c = c.lower()
                 lr = re.compile(re.escape(log['log']))
                 #if this log clip is found in cluster
                 if lr.search(c):
