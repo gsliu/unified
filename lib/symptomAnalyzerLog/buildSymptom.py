@@ -7,14 +7,13 @@ sys.path.append('.')
 
 from lib.symptom import Symptom
 from lib.dbConn import getQueryUnified
-from lib.kb.kbLog import KBLog
+from lib.kb import KB
 
 
 
 class BuildSymptom:
     def __init__(self):
         self.symptoms = self.loadRawSymptoms()
-        self.kl = KBLog()
        
 
     def loadRawSymptoms(self) :
@@ -40,7 +39,8 @@ class BuildSymptom:
             #cn is the cluster number
             cn = -1
             cf = True
-            for c in self.kl.getLogCluster(s.getKbnumber()):
+            kb = KB(s.getKbnumber())
+            for c in kb.getLogCluster():
                 cn = cn + 1
                 #print log['log']
                 c = c.lower()

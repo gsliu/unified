@@ -14,7 +14,7 @@ from lib.matcher.textMatcher import TextMatcher
 from lib.symptom import Symptom
 from lib.symptomHits import SymptomHits
 from task import createTask, startTask
-from lib.kb.kbPage import KBPage
+from lib.kb import KB 
 
 
 
@@ -196,7 +196,7 @@ class SymptomDetail(Resource):
         kbnumber = request.args.get('kbnumber')
         print kbnumber
         s = Symptom(kbnumber)
-        page = IKBPage(kbnumber)
+        page = KB(kbnumber)
 
 #        hits = ""
 #        for h in sh.getGroupHits(int(kbnumber)):

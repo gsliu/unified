@@ -6,6 +6,7 @@ import re
 import os
 from HTMLParser import HTMLParser
 import html2text
+
 class WebPage:
     
     ###########################################
@@ -33,12 +34,6 @@ class WebPage:
 
     # filter links
     def filter_links(self,tags=[],patterns=[]):
-        #CHANGES Apr 17 2011 START
-        #patterns = []
-        #for p in str_patterns:
-        #    patterns.append(re.compile(p))
-        #CHANGES Apr 17 2011 E N D
-        ##
         filterlinks = []
         if len(tags)>0:
             for tag in tags:
@@ -68,15 +63,16 @@ class WebPage:
         return filterlinks    
 
 
-class KBPage( WebPage ):
+class KB( WebPage ):
 
     def __init__(self, kbnumber, datadir='/data/kbdata'):
 	self.kbnumber = kbnumber
 	filename = os.path.join(datadir, str(kbnumber))
-        url = "http://kb.vmware.com/kb/" + str(self.kbnumber)
+        self.url = "http://kb.vmware.com/kb/" + str(self.kbnumber)
+        
         with open(filename, 'r') as f:
-            html = f.read()
-        WebPage.__init__(self, url, html)
+            self.html = f.read()
+        WebPage.__init__(self, self.url, self.html)
         self.resolution_class_name = "cc_Resolution"
         self.solution_class_name = "cc_Solution"
         self.details_class_name = "cc_Details"
@@ -85,7 +81,15 @@ class KBPage( WebPage ):
         self.symptoms_class_name = "cc_Symptoms"
         self.tags_class_name = "cc_Tags"
         self.body_els = self.doc.findall('./body/')
-        #print self.body_els
+
+        # for log extraction
+        self.regs = []
+        self.regs.append(re.compile(r'(<font[^>]+?courier new*.+?<\/font>)'))
+        self.regs.append(re.compile(r'(<span[^>].+?courier new*.+?<\/span>)'))
+        self.regs.append(re.compile(r'(<li[^>]+?courier new*.+?<\/li>)'))
+        self.regs.append(re.compile(r'(<code*.+?<\/code>)'))
+        self.regs.append(re.compile(r'(<tt*.+?<\/tt>)'))
+
         
         if len(self.body_els) > 1:
             pass
@@ -145,13 +149,6 @@ class KBPage( WebPage ):
     def getUrl(self):
         return self.url    
 
-    def getLog(self):
-        return self.log
-
-    def stripTags(self, html):
-        s = MLStripper()
-        s.feed(html)
-        return s.get_data()
 
     def getText(self):
         ret = self.getSymptoms() + self.getCause() + self.getPurpose() + self.getDetails() + self.getSolution() + self.getResolution()
@@ -163,15 +160,39 @@ class KBPage( WebPage ):
     def getFullText(self):
         return self.getTitle() + self.getSymptoms() + self.getCause() + self.getPurpose() + self.getDetails() + self.getSolution() + self.getResolution()
  
-    def getIndexText(self):
-        text =  self.getTitle() + self.getSymptoms() + self.getCause() + self.getPurpose() + self.getDetails() + self.getSolution() + self.getResolution()
-        text = re.sub(r'[\n]+', '#u#u', text)
-        return text
+    def getLog(self):
+        kblog = ""
+        text = self.html
+        #print text
+        for reg in self.regs:
+            m1 = reg.findall(text)
+            #print reg 
+            if m1:
+                for string in m1:
+                    kblog = kblog +  html2text.html2text(string)
+        return kblog
+
+    def getLogCluster(self):
+        cluster = []
+        n = 0
+        text = self.html
+        for reg in self.regs:
+            m1 = reg.findall(text)
+            if m1:
+                for string in m1:
+                    cluster.append(html2text.html2text(string))
+        return cluster
+
+
 
 
 if __name__ == "__main__":
-    kb = KBPage(2034627)
-    kb = KBPage(2119642)
-    kb = KBPage(2097684)
-    print kb.getKbnumber()
-    print kb.getFullText()
+    kb = KB(2034627)
+    kb = KB(2119642)
+    kb = KB(2097684)
+    kb = KB(2135810)
+    #print kb.getKbnumber()
+    #print kb.getFullText()
+    #print kb.getDetails()
+    print kb.getLog()
+    print kb.getLogCluster()

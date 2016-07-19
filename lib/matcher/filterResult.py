@@ -4,7 +4,7 @@ import sys
 import itertools
 
 
-from lib.kb.kbPage import KBPage
+from lib.kb import KB
 
 
 class Interval:
@@ -129,7 +129,7 @@ class SymptomResult:
         return res
 
     def getResult(self):
-        page = KBPage(self.getKbnumber())
+        page = KB(self.getKbnumber())
         logs = []
         for interval in self.clusterRes:
             logs = interval.logs + logs

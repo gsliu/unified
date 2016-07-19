@@ -8,7 +8,7 @@ import sys
 
 sys.path.append('.')
 
-from lib.kb.kbPage import KBPage
+from lib.kb import KB
 
 class KBESLoader:
 
@@ -77,7 +77,7 @@ class KBESLoader:
             print " %d DEBUG: %s" %(i, f)
             file = join(self.kb_dir, f)
             if isfile(file):
-                page = KBPage(int(f))
+                page = KB(int(f))
                 tags = page.getTags()
                 if 'Mandarin' in tags  or 'Chinese' in tags or 'Japanese' in tags or 'Spanish' in tags or 'Portugues' in tags:
                     print 'ignore other langurage kb %s' % page.getKbnumber()
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     
     #loader = IKB_to_ES_Loader(sys.argv[1])
     loader = KBESLoader('/data/kbdata')
-    page = KBPage(2051492)
-    page = KBPage(2097684)
+    page = KB(2051492)
+    page = KB(2097684)
     loader.indexItem(page)
     #loader.indexAll()

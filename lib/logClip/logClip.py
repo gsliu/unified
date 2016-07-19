@@ -60,7 +60,9 @@ class LogClip():
             return False
 
 
-    def saveLog(self, log):
+    def saveLog(self, log, filter=None):
+        if filter:
+            log = filter(log)
         #to lower
         log = log.lower()
        

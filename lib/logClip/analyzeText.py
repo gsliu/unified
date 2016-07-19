@@ -6,6 +6,7 @@ sys.path.append('.')
 from subprocess import PIPE
 from subprocess import Popen
 from lib.logClip.logClip import LogClip
+from lib.logClip.logClipFilter import kbLogFilter
 
 class AnalyzeText:
     def __init__(self):
@@ -21,18 +22,13 @@ class AnalyzeText:
 
         
     def analyze(self, text):
-        ans = []
-        data = '{"analyzer" : "space","text" : "%s"}' %(text)
-        es_url = "http://localhost:9200/kb/_analyze"
-        child = Popen(["curl", es_url, "-d", data, "-XPOST"], stdout=PIPE)
-        res = child.communicate(None)[0]
-        print res
-        jres = json.loads(res)
-        
-        for token in jres['tokens']:
-            print token['token']
-            self.lc.saveLog(token['token'])
+        tokens = text.split()
+        regex = r'[^A-Za-z0-9\-\_]'
+        for token in tokens:
+            logclips = re.split(regex, token)
+            for logclip in logclips:
+                self.lc.saveLog(logclip, kbLogFilter)
 
 if __name__ == '__main__':
     at = AnalyzeText()
-    at.analyze('gengshengl wang')
+    at.analyze("verbose 'vm:/vmfs/volumes/4da7419d-76842557-1fe8-001a6468e1ed/erptlbi/erptlbi.vmx'] VMotionResolveCheck: Firing ResolveCb")

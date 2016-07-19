@@ -1,25 +1,25 @@
 
 class LineDict:
     def __init__(self, text):
-        self.textLine = self.textToDictLine(text)
+        self.textLines = self.textToDictLine(text)
 
 
     def getLines(self, query):
-        if self.textLine.has_key(query):
-            return self.textLine[query]
-        return None
+        ret = []
+        i = 0
+        for line in self.textLines:
+            if query in line:
+                ret.append(i)
+                i = i + 1
+        if len(ret) == 0:
+            return None
+        else:
+            return ret
+           
 
     def textToDictLine(self, text):
-        textLine = {}
-        i = 0
-        for line in  text.split('\n'):
-            for token in line.split():
-                if textLine.has_key(token):
-                    textLine[token].append(i)
-                else:
-                    textLine[token] = [i]
-            i = i + 1
-        return textLine
+        textLines = text.split('\n')
+        return textLines
 
 
 
@@ -29,4 +29,4 @@ if __name__ == '__main__':
     print ld.getLines('abc')
     print ld.getLines('b')
     print ld.getLines(':::')
-    print ld.getLines('a_ad:')
+    print ld.getLines('a')

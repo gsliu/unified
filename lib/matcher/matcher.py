@@ -4,12 +4,13 @@ sys.path.append('.')
 
 from lib.symptom import Symptom
 from lib.dbConn import getQueryUnified
-
+from lib.matcher.clusterFilter import ClusterFilter
 
 
 class Matcher:
     def __init__(self, minscore=0.5 ):
         self.symptoms = self.loadSymptoms(minscore )
+        self.cf = ClusterFilter()
        
 
     def loadSymptoms(self, minscore) :

@@ -75,6 +75,7 @@ class BZESLoader:
         }
         #print doc
         res = self.es.index(index = self.index, doc_type = self.doc_type, id = bug.getBugId(), body = doc)
+        #print res
         return res['created']
 
     def index_worker(self, low, high):
@@ -94,7 +95,7 @@ class BZESLoader:
         print "max:" + str(max_bugid)
         end = max_bugid
         low = begin
-        work_size = (end - begin) / 80
+        work_size = (end - begin) / 40
         high = min(low + work_size, end) 
         while low < high:
             t = Thread(target = self.index_worker, args = (low, high))

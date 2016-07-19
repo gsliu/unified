@@ -3,8 +3,9 @@ import sys
 import json
 import datetime
 
-from kb.kbPage import KBPage
-from dbConn import getQueryUnified
+sys.path.append('.')
+from lib.kb import KB
+from lib.dbConn import getQueryUnified
 
 
 
@@ -45,7 +46,7 @@ class SymptomHits:
         
         for kb in kbs:
             try:
-                page = KBPage(kb['kbnumber'])
+                page = KB(kb['kbnumber'])
                 j = dict()
                 j['url'] = page.getUrl()
                 j['title'] = page.getTitle()

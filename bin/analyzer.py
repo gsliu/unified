@@ -7,11 +7,10 @@ from lib.symptomAnalyzerLog.buildSymptom import BuildSymptom
 from lib.symptomAnalyzerLog.initSymptom import InitSymptom
 from lib.dataScript.loadKBToES import KBESLoader
 from lib.logClip.scanFunction import ScanFunction
+from lib.logClip.scanKBLog import ScanKBLog
 
 
 def scanCode(args):
-    #runset = sys.argv[1].split(';')
-    #loaddir("/data/gengshengl/src/vsphere60p03/bora/vmx")  
 
     runset = []
     runset.append('/data/srcdir/vsphere60p03/bora/')
@@ -26,8 +25,6 @@ def scanCode(args):
 
 def loadKB(args):
     loader = KBESLoader('/data/kbdata')
-    #page = KBPage(2051492)
-    #loader.indexItem(page)
     loader.indexAll()
 
 
