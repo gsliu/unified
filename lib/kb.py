@@ -84,11 +84,12 @@ class KB( WebPage ):
 
         # for log extraction
         self.regs = []
-        self.regs.append(re.compile(r'(<font[^>]+?courier new*.+?<\/font>)'))
-        self.regs.append(re.compile(r'(<span[^>].+?courier new*.+?<\/span>)'))
-        self.regs.append(re.compile(r'(<li[^>]+?courier new*.+?<\/li>)'))
-        self.regs.append(re.compile(r'(<code*.+?<\/code>)'))
-        self.regs.append(re.compile(r'(<tt*.+?<\/tt>)'))
+        self.regs.append(re.compile(r'(<font[^>]{0,50}courier new*.+?<\/font>)'))
+        self.regs.append(re.compile(r'(<span[^>]{0,50}courier new*.+?<\/span>)'))
+        self.regs.append(re.compile(r'(<li[^>]{0,50}courier new*.+?<\/li>)'))
+        self.regs.append(re.compile(r'(<code.+?<\/code>)'))
+        self.regs.append(re.compile(r'(<tt.+?<\/tt>)'))
+        self.logs = self.loadLogCluster()
 
         
         if len(self.body_els) > 1:
@@ -159,40 +160,43 @@ class KB( WebPage ):
  
     def getFullText(self):
         return self.getTitle() + self.getSymptoms() + self.getCause() + self.getPurpose() + self.getDetails() + self.getSolution() + self.getResolution()
- 
+
+    def loadLogCluster(self):
+        
+        logs = []
+        text = unicode(self.html, "utf-8")
+        #print text
+        text = text.replace('\n', '')
+        text = text.lower()
+
+        for reg in self.regs:
+            m1 = reg.findall(text, re.IGNORECASE)
+            if m1:
+                for string in m1:
+                    #print '-------------------------------------------------------------------------\n'
+                    #print string
+                    logs.append(html2text.html2text(string))
+        return logs
+
+
     def getLog(self):
         kblog = ""
-        text = self.html
-        #print text
-        for reg in self.regs:
-            m1 = reg.findall(text)
-            #print reg 
-            if m1:
-                for string in m1:
-                    kblog = kblog +  html2text.html2text(string)
+        for log in self.logs:
+            kblog = kblog + log
         return kblog
 
+
     def getLogCluster(self):
-        cluster = []
-        n = 0
-        text = self.html
-        for reg in self.regs:
-            m1 = reg.findall(text)
-            if m1:
-                for string in m1:
-                    cluster.append(html2text.html2text(string))
-        return cluster
-
-
-
+        return self.logs
 
 if __name__ == "__main__":
     kb = KB(2034627)
     kb = KB(2119642)
     kb = KB(2097684)
     kb = KB(2135810)
+    kb = KB(1556)
     #print kb.getKbnumber()
     #print kb.getFullText()
     #print kb.getDetails()
     print kb.getLog()
-    print kb.getLogCluster()
+    #print kb.getLogCluster()
