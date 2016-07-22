@@ -46,7 +46,7 @@ class TextDispatcher(Resource):
     def post(self):
         if request.form.has_key('text'):
             text = request.form['text']
-            print text
+            #print text
         else:
             return 'No text founded in request', 400
 
@@ -60,7 +60,7 @@ class TextDispatcher(Resource):
         if request.form.has_key('minscore'):
             minscore = request.form['minscore']
         ret = textMatcher.match(text, size, minscore)
-        print ret
+        #print ret
 
         
         return json.dumps(ret), 200, {'Access-Control-Allow-Origin': '*'} 
@@ -286,9 +286,6 @@ class Service:
 
        
 
-
-if __name__ == '__main__':
-    #textMatcher = TextMatcher()
-    s = Service()
-    s.start()
+s = Service()
+app = s.app
 

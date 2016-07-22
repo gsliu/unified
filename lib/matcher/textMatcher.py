@@ -7,6 +7,7 @@ sys.path.append('.')
 
 
 from lib.matcher.matcher import Matcher
+from lib.matcher.fullText import FullText
 from lib.symptomHits import SymptomHits
 
 sh = SymptomHits()
@@ -15,7 +16,8 @@ class TextMatcher(Matcher):
 
     #core matchting algorithm
     def match(self, text, size=10, minscore=0.5):
-        text = text.lower()
+        ft = FullText()
+        ft.index('text', text)
         hitSymptoms = []
         for s in self.symptoms:
 
@@ -23,7 +25,8 @@ class TextMatcher(Matcher):
             mln = 0
             logs = []
             for log in s.getLogs():
-                if log['log'] in text:
+                ftr = ft.search(log['log'])
+                if len(ftr) > 0:
                     log['matched'] = 1
                     score = score + log['score']
                     mln = mln + 1
@@ -33,13 +36,8 @@ class TextMatcher(Matcher):
                 logs.append(log)
 
             if mln > 0:
-                #ret.append({'kbnumber':s.getKbnumber(), 'score':score, 'matchedlog':mln, 'logs':logs})
                 hitSymptoms.append(s)
-        ret = self.cf.computeClusterScore(text, hitSymptoms, size, minscore)
-        
-
-
-
+        ret = self.cf.computeClusterScore(ft, hitSymptoms, size, minscore)
         return ret
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ import itertools
 
 
 from lib.kb import KB
+from lib.matcher.fullText import FullText
 
 
 class Interval:
@@ -100,6 +101,7 @@ class SymptomResult:
         text = '...'
         kbtext = page.getText()
         #print kbtext
+        
     
         for log in logs:
             start = kbtext.find(log['log'])

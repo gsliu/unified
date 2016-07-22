@@ -7,7 +7,7 @@ sys.path.append('.')
 from lib.matcher.filterResult import Result
 from lib.matcher.filterResult import SymptomResult
 from lib.matcher.filterResult import ClusterResult
-from lib.matcher.lineDict import LineDict
+from lib.matcher.fullText import FullText
 
 
 
@@ -28,9 +28,7 @@ class ClusterFilter:
     #         clusterscore += logscore
     # totalscore += clusterscore * N ( N is the number of matched log in cluster)  
 
-    def computeClusterScore(self, text, hitSymptoms, size=30, minscore=0.5):
-        text = text.lower()
-        ld = LineDict(text)
+    def computeClusterScore(self, ft, hitSymptoms, size=30, minscore=0.5):
         result = Result(maxSize = size, minscore=minscore)
         for s in hitSymptoms:
             symptomResult = SymptomResult(s.getKbnumber())
@@ -40,8 +38,11 @@ class ClusterFilter:
                 if cluster['cluster'] == -1:
                     continue
                 for log in cluster['logs']:
-                    lines = ld.getLines(log['log'])
-                    if lines > 0: 
+                    ftr = ft.search(log['log'])
+                    if (ftr) > 0: 
+                        lines = []
+                        for i in ftr:
+                            lines.append(i['line'])
                         matchItem = {'pos':lines, 'log':log}
                         clusterResult.mergeClusterInterval(matchItem)
 
