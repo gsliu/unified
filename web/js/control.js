@@ -50,6 +50,7 @@ function makesearch() {
 function textsearch() {
     //query = query.toLowerCase()
     var query = $('#text_search_input').val();
+    query = encodeURIComponent(query);
     console.log("textMatch::" + query);
 
     $('#btn_analyze').empty();
