@@ -7,7 +7,7 @@ sys.path.append('.')
 
 
 from lib.matcher.matcher import Matcher
-from lib.matcher.fullText import FullText
+#from lib.matcher.fullText import FullText
 from lib.symptomHits import SymptomHits
 
 sh = SymptomHits()
@@ -15,37 +15,42 @@ sh = SymptomHits()
 class TextMatcher(Matcher):
 
     #core matchting algorithm
-    def match(self, text, size=10, minscore=0.5):
-        ft = FullText()
-        ft.index('text', text)
+    def match(self, text, size=10, minscore=0.3):
+        text = text.lower()
+        #ft = FullText()
+        #ft.index('text', text)
         hitSymptoms = []
         for s in self.symptoms:
-
             score = 0.0
             mln = 0
-            logs = []
+            #logs = []
             for log in s.getLogs():
-                ftr = ft.search(log['log'])
-                if len(ftr) > 0:
-                    log['matched'] = 1
+                #ftr = ft.search(log['log'])
+                if log['log'] in text:
+                #if len(ftr) > 0:
+                    #log['matched'] = 1
                     score = score + log['score']
                     mln = mln + 1
-                else:
-                    log['matched'] = 0
+                #else:
+                    #log['matched'] = 0
 
-                logs.append(log)
+                #logs.append(log)
 
-            if mln > 0:
+            if mln > 0 and score > minscore:
                 hitSymptoms.append(s)
-        ret = self.cf.computeClusterScore(ft, hitSymptoms, size, minscore)
+        print len(hitSymptoms)
+        #for h in hitSymptoms:
+        #    print h.getKbnumber()
+        ret = self.cf.computeClusterScore(text, hitSymptoms, size, minscore)
         return ret
 
 if __name__ == '__main__':
-    m = TextMatcher(0.0)
+    m = TextMatcher(2.0)
     #sym = m.getSymptoms()
     text = "YYYY-MM-DDT18:05:57.424Z [3DF03B90 info 'Hostsvc.HaHost'] vmxSwapEnabled = true vmmOvhd.anonymous: 22964 vmmOvhd.paged: 63957 vmmOvhd.nonpaged: 13771\n"
     text = text + "YYYY-MM-DDT18:05:57.433Z [3DF03B90 info 'Vcsvc.VMotionSrc (1388772268136447)'] ResolveCb: VMX reports needsUnregister = false for migrateType MIGRATE_TYPE_VMOTION\n"
     text = text + "YYYY-MM-DDT18:04:27.748Z [4FA40B70 warning 'Vcsvc.VMotionDst (1388772268136447)' opID=57C757C9-000004C9-9c-75-89 user=vpxuser] Bind: Failed to initialize VMotionWorker\n"
+    print text
     ret = m.match(text)
     print ret
     #f = open('log')

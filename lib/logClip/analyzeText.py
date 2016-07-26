@@ -23,7 +23,7 @@ class AnalyzeText:
         
     def analyze(self, text):
         tokens = text.split()
-        regex = r'[^A-Za-z0-9\-\_]'
+        regex = r'[^A-Za-z0-9\-\_\,\.]'
         for token in tokens:
             logclips = re.split(regex, token)
             for logclip in logclips:

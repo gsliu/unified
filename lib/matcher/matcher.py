@@ -14,7 +14,7 @@ class Matcher:
        
 
     def loadSymptoms(self, minscore) :
-        sql = 'select kbnumber from symptom_log_cluster group by kbnumber having sum(score) > %2.8f' % minscore
+        sql = 'select kbnumber from symptom_log group by kbnumber having sum(score) > %2.8f' % minscore
         query = getQueryUnified()
         query.Query(sql)
 

@@ -5,7 +5,6 @@ import itertools
 
 
 from lib.kb import KB
-from lib.matcher.fullText import FullText
 
 
 class Interval:

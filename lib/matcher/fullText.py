@@ -1,7 +1,7 @@
 import re
 
 class FullText:
-    def __init__(self, seperator=r'[^A-Za-z0-9\-\_]'):
+    def __init__(self, seperator=r'[^A-Za-z0-9\-\_\.\,]'):
         self.seperator = seperator
         #[{'name':name, 'line':1, 'offset':1}]
         self.indexData = {}
@@ -63,9 +63,14 @@ class FullText:
 if __name__ == '__main__':
     ft = FullText()
     #ft.index('text', 'abc')
-    ft.index('text', 'abc_bc\n bcd\n os x 10.10 abc bcd\n ccd:::ef\n os x 10.10 tesafdalkjlj\n fangchi, shiyao, bead\n')
+    ft.index('text', 'abc_bc\n bcd\n os x 10.10 abc bcd\n ccd:::ef\n os x, 10.10 tesafdalkjlj\n fangchi, shiyao, bead\n')
+    text = 'abc_bc\n bcd\n os x 10.10 abc bcd\n ccd:::ef\n os x, 10.10 tesafdalkjlj\n fangchi, shiyao, bead\n'
     print ft.indexData
     print ft.search('abc_bc ::')
     print ft.search('ccd ef')
-    print ft.search('shiyao bead')
-    print ft.search('os x 10.10')
+    i = 0
+    while i < 16000000:
+       i = i + 1
+       ft.search('shiyao bead')
+       #'shiyao bead' in text
+    print 'done'

@@ -105,8 +105,10 @@ class EvaluateSearch:
                                 print r
                                 break
                             pos = pos + 1
+                    else:
+                        print '   no result for %s' % pk['pr']
             loop = loop + 1
-            print 'testing %d of %d, %d in the dict ... %s' % ( loop, len(pr_kb), test, str(r))
+            print 'done %d of %d, %d in the dict ... %s' % ( loop, len(pr_kb), test, str(r))
 
 
 

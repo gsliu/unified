@@ -194,7 +194,7 @@ if __name__ == "__main__":
     kb = KB(2119642)
     kb = KB(2097684)
     kb = KB(2135810)
-    kb = KB(1556)
+    kb = KB(2068817)
     #print kb.getKbnumber()
     #print kb.getFullText()
     #print kb.getDetails()
