@@ -31,8 +31,8 @@ class InitSymptom():
             else:
                 log['score'] = 0.0
 
-            #20 hits mean this log clip is too common
-            if total > 20:
+            #10 hits mean this log clip is too common
+            if total > 10:
                 return kbs
  
             for hit in esraw['hits']['hits']:

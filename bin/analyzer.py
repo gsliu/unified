@@ -12,10 +12,20 @@ from lib.logClip.scanKBLog import ScanKBLog
 
 def scanCode(args):
 
+    #hosted-2015-rel  linux  reactos  srm65  view623  vrops  vsan2016  vshield  vsphere51p09  vsphere55p08  vsphere60p03
+
     runset = []
-    runset.append('/data/srcdir/vsphere60p03/bora/')
-    runset.append('/data/srcdir/vsphere60p03/vmkdrivers')
-    runset.append('/data/srcdir/vsphere60p03/bora-vmsoft/')
+    #runset.append('/data/srcdir/vsphere60p03')
+    ##runset.append('/data/srcdir/hosted-2015-rel')
+    ##runset.append('/data/srcdir/srm65')
+    #runset.append('/data/srcdir/view623')
+    #runset.append('/data/srcdir/vrops')
+    #runset.append('/data/srcdir/vsan2016')
+    #runset.append('/data/srcdir/vsphere51p09')
+    #runset.append('/data/srcdir/vsphere55p08')
+    runset.append('/data/srcdir/vshield')
+    runset.append('/data/srcdir/linux')
+    runset.append('/data/srcdir/reactos')
     #runset.append('/data/srcdir/vsphere60p03/bora/')
     for srcdir in runset:
          sf = ScanFunction(srcdir)

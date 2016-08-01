@@ -28,11 +28,11 @@ class ComplexEncoder(json.JSONEncoder):
 
 
 #init matcher....this may take long time.
-textMatcher = TextMatcher(0.0)
+textMatcher = TextMatcher(0.3)
 sh = SymptomHits()
 #indexMatcher = IndexMatcher()
     
-
+#to be redesigned
 #dispatch text
 #url  http://unified.eng.vmware.com:8000/text
 # action: post

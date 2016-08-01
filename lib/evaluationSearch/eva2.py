@@ -41,7 +41,7 @@ class EvaluateSearch:
         print ret
 
     def process(self):
-        pr_kb_sql = 'select min(bug_id) bug_id, kb_id from bug_kb_map group by kb_id'
+        pr_kb_sql = 'select min(bug_id) bug_id, kb_id from bug_kb_map group by kb_id order by bug_id desc'
         query = getQueryBugzilla()
         query.Query(pr_kb_sql)
         data = query.record
